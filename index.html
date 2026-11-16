@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794845121">
+<meta name="loto-version" content="1794857049">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -582,14 +582,15 @@ async function readTicket(file){
   ocrState='Leyendo los números… (la primera vez tarda un poco más)';renderBoleto();
   let ap=[],rein=null,foto=null;
   try{foto=await thumb(file)}catch(e){}
+  let expected=null,dud=[];
   try{
-    await loadTess();const c=await prep(file);
-    const r=await Tesseract.recognize(c,'eng',{logger:m=>{if(m.status==='recognizing text'){const n=document.getElementById('ocrN');if(n)n.textContent=`Leyendo los números… ${Math.round(m.progress*100)}%`}}});
-    const txt=r.data.text||'';ap=parseNums(txt.replace(/[^0-9A-Za-z\n .:)\-]/g,' ')).map(a=>a.filter(n=>n!==''));ap=ap.filter(a=>a.length);rein=parseRein(txt);
-  }catch(e){}
+    await loadTess();
+    const res=await LotoOCR.read(file,{onProgress:(p,msg)=>{const n=document.getElementById('ocrN');if(n)n.textContent=`${msg} ${p}%`}});
+    ap=res.bets.filter(Boolean);rein=res.reintegro;expected=res.expected;dud=(res.dudosas||[]).map(i=>apName(i));
+  }catch(e){console.error(e)}
   ocrState='';
   setBol({semana:weekKey(),apuestas:ap,reintegro:rein,foto,guardado:Date.now()});
-  semMsg=ap.length?`He leído ${ap.length} apuesta${ap.length>1?'s':''}${rein!=null?' y el reintegro':''}. Revisa que estén bien; si no, pulsa "Corregir números".`:'No he podido leer los números. Apúntalos a mano o prueba otra foto.';
+  semMsg=ap.length?(expected&&ap.length<expected?`He leído ${ap.length} de ${expected} apuestas${rein!=null?' y el reintegro':''}. Pulsa "Corregir números" para añadir la que falta, o haz otra foto más de cerca.`:`He leído ${ap.length} apuesta${ap.length>1?'s':''}${rein!=null?' y el reintegro':''}. Revisa que estén bien; si no, pulsa "Corregir números".`)+(dud.length?` Ojo: revisa bien la de ${dud.join(' y ')}, no estoy seguro.`:'')+(rein==null?' No he encontrado el reintegro.':''):'No he podido leer los números. Apúntalos a mano o prueba otra foto más de cerca.';
   editMode=!ap.length;draft=null;
   history.replaceState(null,'','#semana');show('semana');
 }
@@ -615,6 +616,109 @@ async function readTicket(file){
     requestAnimationFrame(tick);
   }
   if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))requestAnimationFrame(tick);
+})();
+
+// ---- Lector de boletos Primitiva ----
+window.LotoOCR=(function(){
+const FIX={O:'0',o:'0',Q:'0',D:'0',I:'1',l:'1','|':'1',S:'5',B:'8',Z:'2',z:'2',G:'6'};
+function parse(text){
+  const out=[];
+  for(const raw of text.split(/\n+/)){
+    let line=raw, idx=null;
+    const m=line.match(/^\s*\W{0,3}([1-8])\s*[.,:;]\s*(.*)$/);
+    if(m){idx=+m[1];line=m[2]}
+    let nums=[];
+    for(let t of line.split(/\s+/)){
+      t=t.replace(/[OoQDIl|SBZzG]/g,c=>FIX[c]).replace(/\D/g,'');
+      if(t.length===2)nums.push(+t);else if(t.length===4)nums.push(+t.slice(0,2),+t.slice(2));
+    }
+    nums=nums.filter(n=>n>=1&&n<=49);
+    if(nums.length>=6){nums=nums.slice(-6);const ok=new Set(nums).size===6&&nums.every((v,i)=>!i||v>nums[i-1]);if(ok)out.push({idx,nums})}
+  }
+  return out;
+}
+function parseLines(lines,y0,y1,sc=1,off=0){const out=[];for(const L of (lines||[])){const r=parse(L.text||'');const yc=((L.bbox.y0+L.bbox.y1)/2-y0)/Math.max(1,y1-y0);for(const b of r){out.push({...b,y:yc});ROWS.push({b:L.bbox.y1/sc+off,h:(L.bbox.y1-L.bbox.y0)/sc})}}return out}
+let ROWS=[];
+function local(c,r=40,off=12){const w=c.width,h=c.height,g=c.getContext('2d'),d=g.getImageData(0,0,w,h),p=d.data;const I=new Float64Array((w+1)*(h+1));for(let y=0;y<h;y++){let rs=0;for(let x=0;x<w;x++){rs+=p[(y*w+x)*4];I[(y+1)*(w+1)+x+1]=I[y*(w+1)+x+1]+rs}}const o=document.createElement('canvas');o.width=w;o.height=h;const og=o.getContext('2d'),od=og.createImageData(w,h);for(let y=0;y<h;y++)for(let x=0;x<w;x++){const x0=Math.max(0,x-r),x1=Math.min(w,x+r+1),y0=Math.max(0,y-r),y1=Math.min(h,y+r+1);const m=(I[y1*(w+1)+x1]-I[y0*(w+1)+x1]-I[y1*(w+1)+x0]+I[y0*(w+1)+x0])/((x1-x0)*(y1-y0));const v=p[(y*w+x)*4]>m-off?255:0;const i=(y*w+x)*4;od.data[i]=od.data[i+1]=od.data[i+2]=v;od.data[i+3]=255}og.putImageData(od,0,0);return o}
+function rein(text){const m=text.toUpperCase().match(/(?:INTEG|TEGR)\w*\W{0,4}(\d)\b/);return m?+m[1]:null}
+function nApu(text){const m=text.toUpperCase().match(/(\d)\s*APUEST/);return m?+m[1]:null}
+function toGray(src,w){const h=Math.round(src.height*w/src.width);const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(src,0,0,w,h);const d=g.getImageData(0,0,w,h),p=d.data;let mn=255,mx=0;for(let i=0;i<p.length;i+=4){const y=(.299*p[i]+.587*p[i+1]+.114*p[i+2])|0;p[i]=y;if(y<mn)mn=y;if(y>mx)mx=y}const k=255/Math.max(1,mx-mn);for(let i=0;i<p.length;i+=4){const y=(p[i]-mn)*k;p[i]=p[i+1]=p[i+2]=y}g.putImageData(d,0,0);return c}
+function otsu(c){const g=c.getContext('2d');const d=g.getImageData(0,0,c.width,c.height),p=d.data;const h=new Array(256).fill(0);for(let i=0;i<p.length;i+=4)h[p[i]|0]++;const tot=p.length/4;let sum=0;for(let t=0;t<256;t++)sum+=t*h[t];let wb=0,sb=0,best=0,th=128;for(let t=0;t<256;t++){wb+=h[t];if(!wb)continue;const wf=tot-wb;if(!wf)break;sb+=t*h[t];const mb=sb/wb,mf=(sum-sb)/wf,v=wb*wf*(mb-mf)*(mb-mf);if(v>best){best=v;th=t}}const o=document.createElement('canvas');o.width=c.width;o.height=c.height;const og=o.getContext('2d');const od=og.createImageData(c.width,c.height);for(let i=0;i<p.length;i+=4){const v=p[i]>th?255:0;od.data[i]=od.data[i+1]=od.data[i+2]=v;od.data[i+3]=255}og.putImageData(od,0,0);return o}
+function crop(c,y0,y1){const o=document.createElement('canvas');o.width=c.width;o.height=Math.max(10,y1-y0);o.getContext('2d').drawImage(c,0,y0,c.width,o.height,0,0,c.width,o.height);return o}
+function rotCanvas(src,deg,maxW=2600){const sc=Math.min(1,maxW/src.width);const w=src.width*sc,h=src.height*sc;const r=deg*Math.PI/180;const W=Math.ceil(Math.abs(w*Math.cos(r))+Math.abs(h*Math.sin(r))),H=Math.ceil(Math.abs(w*Math.sin(r))+Math.abs(h*Math.cos(r)));const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,H);g.translate(W/2,H/2);g.rotate(r);g.drawImage(src,-w/2,-h/2,w,h);return c}
+function skew(src){const sm=otsu(toGray(src,700));const w=sm.width,h=sm.height;const d=sm.getContext('2d').getImageData(0,0,w,h).data;const pts=[];for(let y=0;y<h;y+=1)for(let x=0;x<w;x+=1)if(d[(y*w+x)*4]<128)pts.push([x-w/2,y-h/2]);let best=0,ba=0;for(let a=-8;a<=8;a+=.5){const r=a*Math.PI/180,cs=Math.cos(r),sn=Math.sin(r);const bins=new Float64Array(h*2);for(const [x,y] of pts){const yy=Math.round(-x*sn+y*cs+h);if(yy>=0&&yy<bins.length)bins[yy]++}let v=0;for(let i=1;i<bins.length;i++){const dd=bins[i]-bins[i-1];v+=dd*dd}if(v>best){best=v;ba=a}}return ba}
+async function core(bmp,worker,log){
+  ROWS=[];
+    log(5,'Buscando el boleto…');
+    const W=1600, base=toGray(bmp,W);
+    await worker.setParameters({tessedit_pageseg_mode:'3',tessedit_char_whitelist:''});
+    const r1=await worker.recognize(base);
+    const full=r1.data.text||'';
+    let ya=null,yr=null;
+    for(const w of (r1.data.words||[])){const t=(w.text||'').toUpperCase();if(t.includes('APUEST'))ya=w.bbox.y1;if(/INTEGR/.test(t))yr=w.bbox.y0}
+    let reintegro=rein(full), expected=nApu(full);
+    const cands=[]; // {key,nums,votes,pos:[]}
+    const lens=[];
+    const add=list=>{const seen=new Set();for(const b of list){const key=b.nums.join(',');if(seen.has(key))continue;seen.add(key);const pos=b.y;let c=cands.find(x=>x.key===key);if(!c){c={key,nums:b.nums,votes:0,pos:[]};cands.push(c)}c.votes++;c.pos.push(pos)}if(seen.size)lens.push(seen.size)};
+    const same=(a,b)=>a.filter(x=>b.includes(x)).length>=4;
+    const pick=()=>{const n=expected||(lens.length?lens.slice().sort((x,y)=>lens.filter(v=>v===y).length-lens.filter(v=>v===x).length)[0]:0);const sorted=cands.slice().sort((x,y)=>y.votes-x.votes);const chosen=[];for(const c of sorted){if(chosen.length>=n)break;if(chosen.some(o=>same(o.nums,c.nums)))continue;chosen.push(c)}chosen.sort((x,y)=>x.pos.reduce((s,v)=>s+v,0)/x.pos.length-y.pos.reduce((s,v)=>s+v,0)/y.pos.length);return {n,chosen}};
+    if(ya==null){
+      // No se encontró la cabecera: buscar por franjas
+      log(8,'Buscando los números…');
+      await worker.setParameters({tessedit_pageseg_mode:'6',tessedit_char_whitelist:'0123456789.:REINTGO '});
+      const H=base.height,bh=Math.round(H*.24),st=Math.round(H*.12);let bestN=0,bestY=null;
+      for(let y=0;y<H-st;y+=st){const cc=crop(base,y,Math.min(H,y+bh));const r=await worker.recognize(cc);const rows=parse(r.data.text||'');if(rows.length>bestN){bestN=rows.length;bestY=y}if(expected==null)expected=nApu(r.data.text||'')}
+      if(bestY!=null){ya=Math.max(0,bestY-Math.round(H*.03));yr=Math.min(H,bestY+bh+Math.round(H*.03))}
+    }
+    const top=ya!=null?ya:0, bot=yr!=null?yr+8:(ya!=null?ya+Math.round(.4*W):base.height);
+    add(parseLines(r1.data.lines,top,bot));
+    const passes=[];
+    for(const wd of [1600,2000]){for(const f of ['ac','otsu'])for(const psm of ['6','4','11'])passes.push({wd,f,psm})}
+    const done=()=>{const {n,chosen}=pick();return n>0&&chosen.length===n&&chosen.every(c=>c.votes>=2)};
+    let k=0;
+    for(const ps of passes){
+      if(k>=2&&done())break;
+      k++;log(10+Math.round(80*k/passes.length),'Leyendo los números…');
+      const g=toGray(bmp,ps.wd);const sc=ps.wd/W;let cc=crop(g,Math.round(top*sc),Math.round(bot*sc));if(ps.f==='otsu')cc=otsu(cc);
+      await worker.setParameters({tessedit_pageseg_mode:ps.psm,tessedit_char_whitelist:'0123456789.:REINTGO '});
+      const r=await worker.recognize(cc);const t=r.data.text||'';
+      add(parseLines(r.data.lines,0,cc.height,sc,top));if(reintegro==null)reintegro=rein(t);
+    }
+    if(reintegro==null&&ROWS.length){
+      log(95,'Buscando el reintegro…');
+      const last=Math.max(...ROWS.map(r=>r.b)), rh=ROWS.reduce((s,r)=>s+r.h,0)/ROWS.length;
+      const strip=crop(base,Math.round(last+rh*.2),Math.min(base.height,Math.round(last+rh*3)));
+      for(const [img,psm] of [[strip,'6'],[local(strip),'6'],[strip,'11'],[local(strip),'7']]){
+        await worker.setParameters({tessedit_pageseg_mode:psm,tessedit_char_whitelist:''});
+        const r=await worker.recognize(img);reintegro=rein(r.data.text||'');if(reintegro!=null)break;
+      }
+    }
+    const ch=pick().chosen;const bets=ch.map(c=>c.nums);const dudosas=ch.map((c,i)=>c.votes<2?i:-1).filter(i=>i>=0);
+    return {bets,reintegro,expected,text:full,dudosas};
+}
+async function read(file,opts={}){
+  const log=opts.onProgress||(()=>{});
+  const bmp0=await createImageBitmap(file,{imageOrientation:'from-image'});
+  const worker=await Tesseract.createWorker('eng',1,opts.workerOpts||{});
+  try{
+    let res=await core(bmp0,worker,log);
+    const complete=r=>r.bets.length>0&&(!r.expected||r.bets.length>=r.expected)&&r.reintegro!=null;
+    if(!complete(res)){
+      const ang=skew(bmp0);
+      const tries=Math.abs(ang)>=1?[-ang]:[-2,2];
+      for(const a of tries){
+        log(50,'Probando otra vez, enderezando la foto…');
+        const r2=await core(rotCanvas(bmp0,a),worker,log);
+        const exp=res.expected||r2.expected;
+        if(r2.bets.length>res.bets.length||(r2.bets.length===res.bets.length&&res.reintegro==null&&r2.reintegro!=null))res={...r2,reintegro:r2.reintegro??res.reintegro,expected:exp};
+        else res={...res,reintegro:res.reintegro??r2.reintegro,expected:exp};
+        if(complete(res))break;
+      }
+    }
+    return res;
+  }finally{await worker.terminate()}
+}
+return {read,parse};
 })();
 
 // ---------- inicio ----------
