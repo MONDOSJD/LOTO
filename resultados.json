@@ -1,0 +1,686 @@
+{
+ "2026-10-19": {
+  "n": [
+   4,
+   29,
+   31,
+   43,
+   44,
+   49
+  ],
+  "c": 48,
+  "r": 7,
+  "bote": "38000000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "65633,39",
+    "ganadores": "2"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "3389,52",
+    "ganadores": "71"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "75,04",
+    "ganadores": "4665"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "95488"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "755631"
+   }
+  ]
+ },
+ "2026-10-22": {
+  "n": [
+   1,
+   13,
+   22,
+   35,
+   42,
+   49
+  ],
+  "c": 17,
+  "r": 1,
+  "bote": "40000000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "1221858,64",
+    "ganadores": "1"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "24767,41",
+    "ganadores": "8"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "1470,67",
+    "ganadores": "247"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "41,76",
+    "ganadores": "12652"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "215106"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "981856"
+   }
+  ]
+ },
+ "2026-10-24": {
+  "n": [
+   4,
+   5,
+   10,
+   31,
+   47,
+   48
+  ],
+  "c": 37,
+  "r": 4,
+  "bote": "41000000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "213646,55",
+    "ganadores": "1"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "2432,83",
+    "ganadores": "161"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "61,86",
+    "ganadores": "9210"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "182322"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "1107599"
+   }
+  ]
+ },
+ "2026-10-26": {
+  "n": [
+   4,
+   9,
+   33,
+   37,
+   39,
+   49
+  ],
+  "c": 18,
+  "r": 4,
+  "bote": "42500000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "132309,47",
+    "ganadores": "1"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "2725,48",
+    "ganadores": "89"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "62,91",
+    "ganadores": "5608"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "111941"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "691524"
+   }
+  ]
+ },
+ "2026-10-29": {
+  "n": [
+   2,
+   18,
+   19,
+   28,
+   31,
+   44
+  ],
+  "c": 9,
+  "r": 9,
+  "bote": "45000000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "22116822,05",
+    "ganadores": "2"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "453398,61",
+    "ganadores": "3"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "44114,46",
+    "ganadores": "5"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "2221,88",
+    "ganadores": "182"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "61,1",
+    "ganadores": "9627"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "185172"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "1105941"
+   }
+  ]
+ },
+ "2026-10-31": {
+  "n": [
+   2,
+   6,
+   8,
+   17,
+   27,
+   30
+  ],
+  "c": 47,
+  "r": 1,
+  "bote": "0",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "534448,89",
+    "ganadores": "2"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "57778,26",
+    "ganadores": "3"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "1151,38",
+    "ganadores": "276"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "37,22",
+    "ganadores": "12418"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "203339"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "887384"
+   }
+  ]
+ },
+ "2026-11-02": {
+  "n": [
+   12,
+   25,
+   32,
+   44,
+   46,
+   47
+  ],
+  "c": 2,
+  "r": 2,
+  "bote": "2000000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "48573,22",
+    "ganadores": "2"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "2658,24",
+    "ganadores": "67"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "59,39",
+    "ganadores": "4362"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "83260"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "472316"
+   }
+  ]
+ },
+ "2026-11-05": {
+  "n": [
+   4,
+   8,
+   9,
+   15,
+   31,
+   32
+  ],
+  "c": 2,
+  "r": 3,
+  "bote": "3500000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "26281,65",
+    "ganadores": "7"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "1960,94",
+    "ganadores": "172"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "51,32",
+    "ganadores": "9559"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "194513"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "1050359"
+   }
+  ]
+ },
+ "2026-11-07": {
+  "n": [
+   9,
+   13,
+   19,
+   25,
+   26,
+   30
+  ],
+  "c": 34,
+  "r": 4,
+  "bote": "5500000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "523239,77",
+    "ganadores": "2"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "42424,85",
+    "ganadores": "4"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "1033,61",
+    "ganadores": "301"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "33,25",
+    "ganadores": "13609"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "215943"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "1009965"
+   }
+  ]
+ },
+ "2026-11-09": {
+  "n": [
+   1,
+   6,
+   14,
+   23,
+   30,
+   39
+  ],
+  "c": 36,
+  "r": 2,
+  "bote": "5700000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "7200,88",
+    "ganadores": "15"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "1868,15",
+    "ganadores": "106"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "49,55",
+    "ganadores": "5813"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "105952"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "549486"
+   }
+  ]
+ },
+ "2026-11-12": {
+  "n": [
+   4,
+   10,
+   21,
+   32,
+   33,
+   45
+  ],
+  "c": 24,
+  "r": 9,
+  "bote": "7700000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "65311,98",
+    "ganadores": "3"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "1217,68",
+    "ganadores": "295"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "53,91",
+    "ganadores": "9692"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "174393"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "1003354"
+   }
+  ]
+ },
+ "2026-11-14": {
+  "n": [
+   3,
+   22,
+   24,
+   30,
+   48,
+   49
+  ],
+  "c": 37,
+  "r": 1,
+  "bote": "9800000",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "37290,42",
+    "ganadores": "5"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "1867,92",
+    "ganadores": "183"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "50,77",
+    "ganadores": "9793"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "189535"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "908826"
+   }
+  ]
+ }
+}

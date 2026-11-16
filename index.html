@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794857049">
+<meta name="loto-version" content="1794859824">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -121,6 +121,7 @@ body.sub .brand span{display:none}
 .dchip.on .dok{color:#b8f5c9}
 .respanel{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--bg)}
 .rtitle{font-weight:700;font-size:15px}
+.ofi{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:99px;background:#14c24f;color:#fff;font-size:11px;font-weight:800;vertical-align:middle}
 .rmeta{font-size:14px;color:var(--text2)}
 .linkbtn{border:0;background:none;color:var(--accent);font:inherit;font-size:13px;padding:6px 0 0;cursor:pointer}
 .apu span.nb.win{box-shadow:0 3px 4px rgba(0,0,0,.28),0 0 0 2px #1d5fbf}
@@ -483,7 +484,9 @@ const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${Str
 function drawDays(k){const [y,m,d]=k.split('-').map(Number);return [[0,'Lun'],[3,'Jue'],[5,'Sáb']].map(([o,n])=>{const x=new Date(y,m-1,d+o);return {k:iso(x),n,x}})}
 function drawDates(k){return drawDays(k).map(o=>{const r=getRes()[o.k];return `<button class="dchip ${o.k===selDay?'on':''}" data-day="${o.k}"><span>${o.n}</span><b>${o.x.getDate()}</b><span>${MES[o.x.getMonth()].slice(0,3).toLowerCase()}</span>${r?'<i class="dok">✓</i>':''}</button>`}).join('')}
 const RKEY='loto.res.v1';
-function getRes(){try{return JSON.parse(localStorage.getItem(RKEY)||'{}')}catch(e){return {}}}
+let OFF={};
+function getRes(){let m={};try{m=JSON.parse(localStorage.getItem(RKEY)||'{}')}catch(e){}return Object.assign(m,OFF)}
+(async()=>{try{const r=await fetch('https://raw.githubusercontent.com/MONDOSJD/LOTO/main/resultados.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();for(const k in j){if(j[k]&&Array.isArray(j[k].n))OFF[k]={...j[k],oficial:true}}if(typeof renderAll==='function')renderAll()}}catch(e){}})();
 function setRes(o){try{localStorage.setItem(RKEY,JSON.stringify(o))}catch(e){}}
 let selDay=null,resEdit=false;
 function weekTxt(k){const [y,m,d]=k.split('-').map(Number);const a=new Date(y,m-1,d),b=new Date(y,m-1,d+6);return `${a.getDate()} ${MES[a.getMonth()].slice(0,3).toLowerCase()} – ${b.getDate()} ${MES[b.getMonth()].slice(0,3).toLowerCase()}`}
@@ -502,13 +505,13 @@ function renderSemana(){
   <div class="card">
     <div class="dchips">${drawDates(wk)}</div>
     <div class="respanel">
-      <div class="rtitle">Resultado · ${selTxt}</div>
+      <div class="rtitle">Resultado · ${selTxt}${res&&res.oficial?' <span class="ofi">Oficial</span>':''}</div>
       ${resEdit?`<div class="balls" style="margin:8px 0">${[0,1,2,3,4,5].map(j=>`<input class="nb" inputmode="numeric" maxlength="2" data-r="${j}" value="${res&&res.n[j]!=null?String(res.n[j]).padStart(2,'0'):''}">`).join('')}</div>
         <div class="apu"><span class="lbl">C</span><input class="nb" id="rC" inputmode="numeric" maxlength="2" value="${res&&res.c!=null?res.c:''}"><span class="lbl" style="margin-left:10px">R</span><input class="nb rein" id="rR" inputmode="numeric" maxlength="1" value="${res&&res.r!=null?res.r:''}"></div>
         <div class="btnrow" style="margin-top:8px"><button class="btn" id="rSave">Guardar resultado</button><button class="btn ghost" id="rCancel">Cancelar</button></div>`
       :res?`<div class="balls" style="margin:8px 0">${res.n.map(n=>ball(n,'win')).join('')}</div>
         <div class="rmeta">${res.c!=null?`Complementario <b>${String(res.c).padStart(2,'0')}</b>`:''}${res.r!=null?` &nbsp;·&nbsp; Reintegro <b>${res.r}</b>`:''}</div>
-        <button class="linkbtn" id="rEdit">Corregir resultado</button>`
+        ${res.oficial?'':'<button class="linkbtn" id="rEdit">Corregir resultado</button>'}`
       :`<p class="note" style="margin:6px 0 8px">Aún no está el resultado de este sorteo.</p><button class="btn ghost" id="rEdit">Apuntar resultado</button>`}
     </div>
     ${semMsg?`<p class="note" style="margin:0 0 10px">${semMsg}</p>`:''}
