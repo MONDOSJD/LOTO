@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794839250">
+<meta name="loto-version" content="1794844214">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -93,6 +93,8 @@ body.sub .brand span{display:none}
 .ticker.t2{background:#fde3d5}
 .ticker.t2 .tk{color:#7a2e0b;animation-duration:13s}
 .ticker.t2 .tk b{background:#eb6834}
+.ticker.t2 .tk b.free{background:#2fae5a}
+.ticker.t2 .tk b.max{background:#e04848}
 .ticker.t2 .pm{font-weight:800;text-transform:uppercase;font-size:13px;letter-spacing:.03em}
 .ticker.t2 .pc{font-weight:800}
 @media (prefers-color-scheme:dark){.ticker.t2{background:#3a2218}.ticker.t2 .tk{color:#f6c7ae}}
@@ -632,7 +634,7 @@ function renderInicio(){
     <button class="sq k1" data-go="mes">${ic.mes}<div style="min-width:0"><div class="t">${label(cur)} ${cur.y}</div><div class="ticker"><div class="tk">${tk}</div></div></div></button>
     <button class="sq k2" data-go="clasif">${ic.clasif}<div><div class="t">Clasificación</div><div class="d">Menos cenas pagadas: ${lider.map(i=>P[i]).join(' y ')}</div></div></button>
     <button class="sq k3" data-go="hist">${ic.hist}<div><div class="t">Histórico</div><div class="d">Desde ${MES[meses[0].m-1].toLowerCase()} ${meses[0].y}, año a año</div></div></button>
-    <button class="sq k4" data-go="cenas">${ic.cenas}<div style="min-width:0"><div class="t">Cenas</div>${pend.length?`<div class="ticker t2"><div class="tk">${(()=>{const m=pend[0],sh=shares(m);return `<span class="pc">Próxima:</span><span class="pm">${label(m)}${m.y!==cur.y?" "+m.y:""}</span>`+[0,1,2].filter(i=>sh[i]>1e-9).sort((a,b)=>sh[b]-sh[a]).map(i=>`<span>${P[i]} <b>${frac(sh[i])}</b></span>`).join('')})()}</div></div>`:'<div class="d">Ninguna pendiente</div>'}</div></button>
+    <button class="sq k4" data-go="cenas">${ic.cenas}<div style="min-width:0"><div class="t">Cenas</div>${pend.length?`<div class="ticker t2"><div class="tk">${(()=>{const m=pend[0],sh=shares(m);const mx=Math.max(...sh);const ord=[0,1,2].sort((a,b)=>sh[a]-sh[b]);return `<span class="pc">Próxima cena a pagar:</span><span class="pm">${label(m)}/${String(m.y).slice(2)}</span>`+ord.map(i=>`<span>${P[i]} <b class="${sh[i]<1e-9?'free':(Math.abs(sh[i]-mx)<1e-9?'max':'mid')}">${sh[i]<1e-9?'0':frac(sh[i])}</b></span>`).join('')})()}</div></div>`:'<div class="d">Ninguna pendiente</div>'}</div></button>
 
   </div>`;
   document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.go});
