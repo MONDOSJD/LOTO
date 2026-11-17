@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794905713">
+<meta name="loto-version" content="1794905818">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -61,6 +61,7 @@ body.sub .brand span{display:none}
 .rank .rn{flex:1;min-width:0}
 .rank .rn .bar{height:6px;margin-top:5px}
 .rank b{flex:none;font-size:18px;min-width:26px;text-align:right}
+.subtabs.two{grid-template-columns:repeat(2,1fr)}
 .subtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stab{font:inherit;font-weight:700;font-size:15px;color:var(--text);padding:10px 4px 9px;border-radius:12px;border:1px solid #dcd9d0;background:linear-gradient(180deg,#fff,#efede7);box-shadow:0 4px 0 #cfccc2;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .06s,box-shadow .06s;-webkit-tap-highlight-color:transparent}
 .stab span{font-size:12px;font-weight:600;color:var(--text2)}
@@ -304,6 +305,7 @@ const semOf=m=>m.m<=6?1:2;
 function semData(y,h){const ms=meses.filter(m=>m.y===y&&semOf(m)===h);return {ms,tot:[0,1,2].map(i=>ms.reduce((s,m)=>s+(+m.tot[i]||0),0))}}
 const semName=(y,h)=>`${h}º semestre ${y}`;
 // ---------- ESTE MES ----------
+let mesTab='mes';
 function renderMes(){
   recalcCur();
   const t=cur.tot, lo=lows(t), hi=highs(t), d=curDraws();
@@ -313,7 +315,9 @@ function renderMes(){
   else if(hi.length>1) heroTxt=`Van primeros <b>${hi.map(i=>P[i]).join(' y ')}</b>, empatados.`;
   else {const gap=t[hi[0]]-Math.max(...t.filter((v,i)=>i!==hi[0]));heroTxt=`Va primero <b>${P[hi[0]]}</b>, con ${gap} punto${gap===1?'':'s'} de ventaja.`}
   const pend=pendientes();
-  $("#v-mes").innerHTML=`
+  const SHm=semOf(cur),yy=String(cur.y).slice(2);
+  const tabsH=`<div class="subtabs two"><button class="stab ${mesTab==='mes'?'on':''}" data-mt="mes">${label(cur)}/${yy}<span>Mes en curso</span></button><button class="stab ${mesTab==='sem'?'on':''}" data-mt="sem">${SHm}º semestre/${yy}<span>Semestral</span></button></div>`;
+  $("#v-mes").innerHTML=tabsH+(mesTab==='mes'?`
   <div class="card">
     <div class="tiles">${order.map(i=>`
       <div class="tile ${hi.length<N&&hi.includes(i)?'lead':''}">
@@ -322,19 +326,20 @@ function renderMes(){
         <div class="sub">puntos</div>
         ${hi.length<N&&hi.includes(i)?'<span class="badge good">Líder</span>':''}
       </div>`).join('')}</div>
-  </div>
+  </div>`:'')+(mesTab==='sem'?`
   ${(()=>{const h=semOf(cur),S=semData(cur.y,h),st=S.tot,so=[0,1,2].sort((a,b)=>st[b]-st[a]),sh=highs(st),sl=lows(st);
     return `<div class="card semcard"><h2>${semName(cur.y,h).toUpperCase()}</h2>
     <div class="semrank">${so.map((i,k)=>`<div class="sr ${sh.length<N&&sh.includes(i)?'g':sl.length<N&&sl.includes(i)?'r':''}"><span class="pos">${k+1}º</span><span class="nm">${P[i]}</span><b>${st[i]}</b></div>`).join('')}</div>
     <div class="scroll"><table><thead><tr><th>Mes</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead><tbody>
     ${S.ms.map(m=>`<tr><td>${label(m)}${m.enCurso?' <span style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}
-    </tbody></table></div></div>`})()}
+    </tbody></table></div></div>`})()}`:'')+(mesTab==='mes'?`
   <div class="card">
     <h2>Sorteos de ${label(cur).toUpperCase()}</h2>
     <div class="scroll"><table><thead><tr><th>Día</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
     <tbody>${d.slice().reverse().map(x=>{const mx=Math.max(...x.p);return `<tr><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
   </div>
-  `;
+  `:'');
+  document.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{mesTab=b.dataset.mt;renderMes()});
   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{local.draws=(local.draws||[]).filter(x=>x.id!=b.dataset.del);saveLocal();renderAll()});
 }
 function nextDay(d){const last=d.length?d[d.length-1].d:0;for(let k=last+1;k<=31;k++){const g=new Date(cur.y,cur.m-1,k);if(g.getMonth()!==cur.m-1)break;if([1,4,6].includes(g.getDay()))return k}return last+1}
@@ -807,7 +812,7 @@ function renderInicio(){
 const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:()=>{$('#v-clasif').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán las marcas y récords. Próximamente.</p></div>'},hist:renderHist,cenas:renderCenas};
 let view='inicio';
 const TT={saldos:'Saldos',premios:'Premios',semana:'Números de la semana',boleto:'Boleto',mes:'',clasif:'Récords',hist:'Histórico',cenas:'Cenas'};
-function show(v){view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?`${label(cur).toUpperCase()} ${cur.y}`:(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
+function show(v){view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?'Clasificación':(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
 function renderAll(){R[view]()}
 $('#back').onclick=()=>{if(history.length>1&&view!=='inicio'&&sessionStorage.getItem('lotoNav'))history.back();else location.hash='inicio'};
 addEventListener('hashchange',()=>{try{sessionStorage.setItem('lotoNav','1')}catch(e){}const h=location.hash.slice(1);show(R[h]?h:'inicio')});
