@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794901950">
+<meta name="loto-version" content="1794902468">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -110,6 +110,11 @@ body.sub .brand span{display:none}
 .ticker.t2 .pm{font-weight:800;text-transform:uppercase;font-size:13px;letter-spacing:.03em}
 .ticker.t2 .pc{font-weight:800}
 @media (prefers-color-scheme:dark){.ticker.t2{background:#3a2218}.ticker.t2 .tk{color:#f6c7ae}}
+.ticker .pc{font-weight:800}
+.ticker.alt .tk.ta{animation:tka 22s linear infinite}
+.ticker.alt .tk.tb{animation:tkb 22s linear infinite}
+@keyframes tka{0%{left:100%;transform:translateX(0)}40%{left:0;transform:translateX(-100%)}50%{left:0;transform:translateX(-100%)}50.01%{left:100%;transform:translateX(0)}100%{left:100%;transform:translateX(0)}}
+@keyframes tkb{0%{left:100%;transform:translateX(0)}50%{left:100%;transform:translateX(0)}90%{left:0;transform:translateX(-100%)}100%{left:0;transform:translateX(-100%)}}
 @keyframes tk{0%{left:100%;transform:translateX(0)}70%{left:0;transform:translateX(-100%)}100%{left:0;transform:translateX(-100%)}}
 @media (prefers-color-scheme:dark){.ticker{background:#1d2c42}.tk{color:#cfe0f7}}
 .sq .t{font-size:18px;font-weight:700}
@@ -773,7 +778,7 @@ function renderInicio(){
   recalcCur();
   const lo=lows(cur.tot),pend=pendientes(),cs=closed();
   const s=stats(cs);const minPago=Math.min(...s.map(x=>x.pago));const lider=[0,1,2].filter(i=>Math.abs(s[i].pago-minPago)<1e-9);
-  const SH=semOf(cur),SD=semData(cur.y,SH),ordS=[0,1,2].sort((a,b)=>SD.tot[b]-SD.tot[a]);const tkS=`<span class="pc">${SH}º semestre:</span>`+ordS.map((i,k)=>`<span>${k+1}º ${P[i]} <b>${SD.tot[i]}</b></span>`).join('<span class="sep">·</span>');
+  const SH=semOf(cur),SD=semData(cur.y,SH),ordS=[0,1,2].sort((a,b)=>SD.tot[b]-SD.tot[a]);const tkS=`<span class="pc">${SH}º SEMESTRE/${String(cur.y).slice(2)}:</span>`+ordS.map((i,k)=>`<span>${k+1}º ${P[i]} <b>${SD.tot[i]}</b></span>`).join('<span class="sep">·</span>');
   const ordC=[0,1,2].sort((a,b)=>cur.tot[b]-cur.tot[a]);const tk=ordC.map((i,k)=>`<span>${k+1}º ${P[i]} <b>${cur.tot[i]}</b></span>`).join('<span class="sep">·</span>');
   const hi=highs(cur.tot);const mesTxt=hi.length===N?'Empatados los tres':hi.length>1?'Empate arriba':`Va primero ${P[hi[0]]}`;
   const ic={
@@ -788,7 +793,7 @@ function renderInicio(){
   $('#v-inicio').innerHTML=`<div class="grid">
     <button class="sq k6 wide col" data-go="semana">${ic.semana}<div><div class="t">Números para esta semana</div>${(()=>{const b=curBol();return b&&b.apuestas.length?'<span class="stt ok">✓ Números disponibles</span>':'<span class="stt ko">⚠ Sin números aún</span>'})()}</div></button>
     <button class="sq k5 fotobar" data-go="boleto">${ic.boleto}<span>Hacer foto del boleto</span></button>
-    <button class="sq k1" data-go="mes">${ic.mes}<div style="min-width:0"><div class="t">${label(cur)} ${cur.y}</div><div class="ticker"><div class="tk">${tk}</div></div><div class="ticker t3"><div class="tk">${tkS}</div></div></div></button>
+    <button class="sq k1" data-go="mes">${ic.mes}<div style="min-width:0"><div class="t">Clasificación</div><div class="ticker alt"><div class="tk ta"><span class="pc">${label(cur).toUpperCase()}/${String(cur.y).slice(2)}:</span>${tk}</div></div><div class="ticker t3 alt"><div class="tk tb">${tkS}</div></div></div></button>
     <button class="sq k2" data-go="clasif">${ic.clasif}<div><div class="t">Clasificación</div><div class="d">Menos cenas pagadas: ${lider.map(i=>P[i]).join(' y ')}</div></div></button>
     <button class="sq k3" data-go="hist">${ic.hist}<div><div class="t">Histórico</div><div class="d">Desde ${MES[meses[0].m-1].toLowerCase()} ${meses[0].y}, año a año</div></div></button>
     <button class="sq k4" data-go="cenas">${ic.cenas}<div style="min-width:0"><div class="t">Cenas</div>${pend.length?`<div class="ticker t2"><div class="tk">${(()=>{const m=pend[0],sh=shares(m);const mx=Math.max(...sh);const ord=[0,1,2].sort((a,b)=>sh[a]-sh[b]);return `<span class="pc">Próxima cena a pagar:</span><span class="pm">${label(m)}/${String(m.y).slice(2)}</span>`+ord.map(i=>`<span>${P[i]} <b class="${sh[i]<1e-9?'free':(Math.abs(sh[i]-mx)<1e-9?'max':'mid')}">${sh[i]<1e-9?'0':frac(sh[i])}</b></span>`).join('')})()}</div></div>`:'<div class="d">Ninguna pendiente</div>'}</div></button>
