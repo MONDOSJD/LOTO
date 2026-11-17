@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794859824">
+<meta name="loto-version" content="1794901621">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -263,7 +263,9 @@ function saveLocal(){try{localStorage.setItem(STORE,JSON.stringify(local))}catch
 
 // merge local draws into data
 const meses=D.meses.map(m=>Object.assign({},m,{draws:m.draws.slice()}));
-const cur=meses[meses.length-1];
+let cur=meses[meses.length-1];
+const BASE_N=meses.length;
+const LASTX=(()=>{const m=meses[meses.length-1];const d=Math.max(0,...m.draws.map(x=>x.d||0));return `${m.y}-${String(m.m).padStart(2,'0')}-${String(d).padStart(2,'0')}`})();
 function curDraws(){const extra=(local.draws||[]).map(x=>Object.assign({mine:true},x));return cur.draws.concat(extra).sort((a,b)=>a.d-b.d)}
 function recalcCur(){const d=curDraws();cur.tot=[0,1,2].map(i=>d.reduce((s,x)=>s+(+x.p[i]||0),0))}
 recalcCur();
@@ -478,7 +480,27 @@ function niceStep(mx,t=5){const raw=mx/t,p=Math.pow(10,Math.floor(Math.log10(raw
 // ---------- BOLETO ----------
 const BKEY='loto.boleto.v1';
 function getBol(){try{return JSON.parse(localStorage.getItem(BKEY)||'null')}catch(e){return null}}
-function setBol(b){try{localStorage.setItem(BKEY,JSON.stringify(b))}catch(e){}}
+function setBol(b){try{localStorage.setItem(BKEY,JSON.stringify(b));if(b&&b.semana){const h=getHist();h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};localStorage.setItem(HKEY,JSON.stringify(h))}}catch(e){}if(typeof applyAuto==='function')applyAuto()}
+const HKEY='loto.boletos.v1';
+function getHist(){let h={};try{h=JSON.parse(localStorage.getItem(HKEY)||'{}')}catch(e){}const b=getBol();if(b&&b.semana&&!h[b.semana])h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};return h}
+// Suma automática de puntos: resultados oficiales posteriores al Excel + apuestas de esa semana (1 punto por acierto)
+function applyAuto(){
+  meses.length=BASE_N;cur=meses[BASE_N-1];
+  meses.forEach(m=>{m.draws=m.draws.filter(x=>!x.auto)});
+  const H=getHist();
+  for(const k of Object.keys(OFF).sort()){
+    if(k<=LASTX)continue;
+    const [y,mo,d]=k.split('-').map(Number);const dt=new Date(y,mo-1,d);
+    const bets=(H[weekKey(dt)]||{}).apuestas;if(!bets||bets.length<3)continue;
+    const win=new Set(OFF[k].n);const p=[0,1,2].map(i=>bets[i].filter(n=>win.has(n)).length);
+    let m=meses.find(x=>x.y===y&&x.m===mo);
+    if(!m){m={y,m:mo,tot:[0,0,0],draws:[],pago:null};meses.push(m)}
+    if(m.draws.some(x=>x.d===d))continue;
+    m.draws.push({d,wd:'DLMXJVS'[dt.getDay()],p,auto:true});m.draws.sort((a,b)=>a.d-b.d);
+  }
+  meses.forEach((m,i)=>{m.enCurso=i===meses.length-1;if(i>=BASE_N-1)m.tot=[0,1,2].map(j=>m.draws.reduce((s,x)=>s+(+x.p[j]||0),0))});
+  cur=meses[meses.length-1];
+}
 function weekKey(d=new Date()){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const dw=(x.getDay()+6)%7;x.setDate(x.getDate()-dw);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`}
 const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
 function drawDays(k){const [y,m,d]=k.split('-').map(Number);return [[0,'Lun'],[3,'Jue'],[5,'Sáb']].map(([o,n])=>{const x=new Date(y,m-1,d+o);return {k:iso(x),n,x}})}
@@ -486,7 +508,7 @@ function drawDates(k){return drawDays(k).map(o=>{const r=getRes()[o.k];return `<
 const RKEY='loto.res.v1';
 let OFF={};
 function getRes(){let m={};try{m=JSON.parse(localStorage.getItem(RKEY)||'{}')}catch(e){}return Object.assign(m,OFF)}
-(async()=>{try{const r=await fetch('https://raw.githubusercontent.com/MONDOSJD/LOTO/main/resultados.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();for(const k in j){if(j[k]&&Array.isArray(j[k].n))OFF[k]={...j[k],oficial:true}}if(typeof renderAll==='function')renderAll()}}catch(e){}})();
+(async()=>{try{const r=await fetch('https://raw.githubusercontent.com/MONDOSJD/LOTO/main/resultados.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();for(const k in j){if(j[k]&&Array.isArray(j[k].n))OFF[k]={...j[k],oficial:true}}if(typeof applyAuto==='function')applyAuto();if(typeof renderAll==='function')renderAll()}}catch(e){}})();
 function setRes(o){try{localStorage.setItem(RKEY,JSON.stringify(o))}catch(e){}}
 let selDay=null,resEdit=false;
 function weekTxt(k){const [y,m,d]=k.split('-').map(Number);const a=new Date(y,m-1,d),b=new Date(y,m-1,d+6);return `${a.getDate()} ${MES[a.getMonth()].slice(0,3).toLowerCase()} – ${b.getDate()} ${MES[b.getMonth()].slice(0,3).toLowerCase()}`}
