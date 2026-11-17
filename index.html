@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794901621">
+<meta name="loto-version" content="1794901950">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -79,6 +79,18 @@ body.sub .brand span{display:none}
 .sq:active{transform:translateY(5px);box-shadow:0 1px 0 #cfccc2,0 3px 6px rgba(0,0,0,.14),inset 0 2px 0 rgba(255,255,255,.9),inset 0 -2px 4px rgba(0,0,0,.06)}
 .sq svg{flex:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
 .sq.k1 .t{font-size:16px;white-space:nowrap}
+.sq.k1 svg{width:44px;height:44px;margin-top:0}
+.sq.k1{padding-top:12px;padding-bottom:12px}
+.sq.k1 .ticker{height:26px;margin-top:5px}.sq.k1 .ticker .tk{height:26px;font-size:14px}
+.ticker.t3{background:#efe3fb}.ticker.t3 .tk{color:#4b2386;animation-duration:12s}.ticker.t3 .tk b{background:#7c4dcc}
+@media (prefers-color-scheme:dark){.ticker.t3{background:#2c2240}.ticker.t3 .tk{color:#ddccf7}}
+.semcard h2{font-size:18px}
+.semrank{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.semrank .sr{display:flex;flex-direction:column;align-items:center;padding:10px 4px;border-radius:12px;border:1px solid #dedbd2;background:#fff;box-shadow:0 3px 0 #d6d3c9}
+.semrank .sr .pos{font-size:12px;font-weight:800;color:var(--text2)}.semrank .sr .nm{font-weight:700;font-size:15px}.semrank .sr b{font-size:30px;line-height:1.1}
+.semrank .sr.g{background:#2fae5a;border-color:#23934a;box-shadow:0 3px 0 #1b7a3c;color:#fff}.semrank .sr.g .pos{color:#d8ffe4}
+.semrank .sr.r{background:#e04848;border-color:#c53a3a;box-shadow:0 3px 0 #a52f2f;color:#fff}.semrank .sr.r .pos{color:#ffe0e0}
+#v-hist tr.semrow td{background:#f5f2ff}#v-hist tr.semrow td:first-child{font-weight:700;color:#4b2386}
 .sq .t{text-shadow:0 1px 0 #fff}
 @media (prefers-color-scheme:dark){.sq{background:linear-gradient(180deg,#2a2a28,#1f1f1d);border-color:#333;box-shadow:0 6px 0 #0e0e0d,0 10px 18px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}.sq .t{text-shadow:none}}
 .sq svg{width:38px;height:38px}
@@ -283,6 +295,9 @@ function payTxt(m,sep='<br>',noDot){const sh=shares(m);return [0,1,2].filter(i=>
 const f1=v=>(Math.round(v*10)/10).toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1});
 
 const closed=()=>meses.filter(m=>!m.enCurso);
+const semOf=m=>m.m<=6?1:2;
+function semData(y,h){const ms=meses.filter(m=>m.y===y&&semOf(m)===h);return {ms,tot:[0,1,2].map(i=>ms.reduce((s,m)=>s+(+m.tot[i]||0),0))}}
+const semName=(y,h)=>`${h}º semestre ${y}`;
 // ---------- ESTE MES ----------
 function renderMes(){
   recalcCur();
@@ -303,6 +318,12 @@ function renderMes(){
         ${hi.length<N&&hi.includes(i)?'<span class="badge good">Líder</span>':''}
       </div>`).join('')}</div>
   </div>
+  ${(()=>{const h=semOf(cur),S=semData(cur.y,h),st=S.tot,so=[0,1,2].sort((a,b)=>st[b]-st[a]),sh=highs(st),sl=lows(st);
+    return `<div class="card semcard"><h2>${semName(cur.y,h).toUpperCase()}</h2>
+    <div class="semrank">${so.map((i,k)=>`<div class="sr ${sh.length<N&&sh.includes(i)?'g':sl.length<N&&sl.includes(i)?'r':''}"><span class="pos">${k+1}º</span><span class="nm">${P[i]}</span><b>${st[i]}</b></div>`).join('')}</div>
+    <div class="scroll"><table><thead><tr><th>Mes</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead><tbody>
+    ${S.ms.map(m=>`<tr><td>${label(m)}${m.enCurso?' <span style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}
+    </tbody></table></div></div>`})()}
   <div class="card">
     <h2>Sorteos de ${label(cur).toUpperCase()}</h2>
     <div class="scroll"><table><thead><tr><th>Día</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
@@ -417,6 +438,7 @@ function renderHist(){
     <div class="scroll"><table>
       <thead><tr><th>Mes</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead>
       <tbody>${ms.map(m=>{const lo=lows(m.tot),hi=highs(m.tot),p=payer(m);return `<tr><td>${label(m)}${m.enCurso?' <span class="meta" style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map((v,i)=>`<td><span class="sqv ${lo.length<N&&lo.includes(i)?'r':hi.length<N&&hi.includes(i)?'g':''}">${v}</span></td>`).join('')}</tr>`}).join('')}
+      ${[1,2].map(h=>{const S=semData(histYear,h);if(!S.ms.length)return '';const hi=highs(S.tot),lo=lows(S.tot);return `<tr class="semrow"><td>${h}º semestre</td>${S.tot.map((v,i)=>`<td><span class="sqv ${lo.length<N&&lo.includes(i)?'r':hi.length<N&&hi.includes(i)?'g':''}">${v}</span></td>`).join('')}</tr>`}).join('')}
       <tr><td><b>Total</b></td>${totY.map(v=>`<td><b>${v}</b></td>`).join('')}</tr></tbody>
     </table></div>
   </div>`;
@@ -751,6 +773,7 @@ function renderInicio(){
   recalcCur();
   const lo=lows(cur.tot),pend=pendientes(),cs=closed();
   const s=stats(cs);const minPago=Math.min(...s.map(x=>x.pago));const lider=[0,1,2].filter(i=>Math.abs(s[i].pago-minPago)<1e-9);
+  const SH=semOf(cur),SD=semData(cur.y,SH),ordS=[0,1,2].sort((a,b)=>SD.tot[b]-SD.tot[a]);const tkS=`<span class="pc">${SH}º semestre:</span>`+ordS.map((i,k)=>`<span>${k+1}º ${P[i]} <b>${SD.tot[i]}</b></span>`).join('<span class="sep">·</span>');
   const ordC=[0,1,2].sort((a,b)=>cur.tot[b]-cur.tot[a]);const tk=ordC.map((i,k)=>`<span>${k+1}º ${P[i]} <b>${cur.tot[i]}</b></span>`).join('<span class="sep">·</span>');
   const hi=highs(cur.tot);const mesTxt=hi.length===N?'Empatados los tres':hi.length>1?'Empate arriba':`Va primero ${P[hi[0]]}`;
   const ic={
@@ -765,7 +788,7 @@ function renderInicio(){
   $('#v-inicio').innerHTML=`<div class="grid">
     <button class="sq k6 wide col" data-go="semana">${ic.semana}<div><div class="t">Números para esta semana</div>${(()=>{const b=curBol();return b&&b.apuestas.length?'<span class="stt ok">✓ Números disponibles</span>':'<span class="stt ko">⚠ Sin números aún</span>'})()}</div></button>
     <button class="sq k5 fotobar" data-go="boleto">${ic.boleto}<span>Hacer foto del boleto</span></button>
-    <button class="sq k1" data-go="mes">${ic.mes}<div style="min-width:0"><div class="t">${label(cur)} ${cur.y}</div><div class="ticker"><div class="tk">${tk}</div></div></div></button>
+    <button class="sq k1" data-go="mes">${ic.mes}<div style="min-width:0"><div class="t">${label(cur)} ${cur.y}</div><div class="ticker"><div class="tk">${tk}</div></div><div class="ticker t3"><div class="tk">${tkS}</div></div></div></button>
     <button class="sq k2" data-go="clasif">${ic.clasif}<div><div class="t">Clasificación</div><div class="d">Menos cenas pagadas: ${lider.map(i=>P[i]).join(' y ')}</div></div></button>
     <button class="sq k3" data-go="hist">${ic.hist}<div><div class="t">Histórico</div><div class="d">Desde ${MES[meses[0].m-1].toLowerCase()} ${meses[0].y}, año a año</div></div></button>
     <button class="sq k4" data-go="cenas">${ic.cenas}<div style="min-width:0"><div class="t">Cenas</div>${pend.length?`<div class="ticker t2"><div class="tk">${(()=>{const m=pend[0],sh=shares(m);const mx=Math.max(...sh);const ord=[0,1,2].sort((a,b)=>sh[a]-sh[b]);return `<span class="pc">Próxima cena a pagar:</span><span class="pm">${label(m)}/${String(m.y).slice(2)}</span>`+ord.map(i=>`<span>${P[i]} <b class="${sh[i]<1e-9?'free':(Math.abs(sh[i]-mx)<1e-9?'max':'mid')}">${sh[i]<1e-9?'0':frac(sh[i])}</b></span>`).join('')})()}</div></div>`:'<div class="d">Ninguna pendiente</div>'}</div></button>
