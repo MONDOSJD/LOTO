@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794957501">
+<meta name="loto-version" content="1795031883">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -39,8 +39,9 @@ body:not(.sub) header{display:none}
 body:not(.sub) main{padding-top:20px}
 body.sub .brand span{display:none}
 .bigsel{font-size:20px;font-weight:700;padding:8px 12px;border-radius:12px;min-width:110px}
-#v-mes .tile .name{font-size:18px;color:var(--text)}
-#v-mes .tile .big{font-size:46px}
+#v-mes .tile{text-align:center;padding:10px 6px}
+#v-mes .tile .name{font-size:15px;color:var(--text);text-transform:uppercase;justify-content:center;font-weight:800}
+#v-mes .tile .big{font-size:46px;line-height:1.1}
 #v-mes .tile .sub{font-size:14px}
 #v-mes td,#v-mes th{font-size:18px;padding:11px 6px}
 #v-mes th{font-size:15px;color:var(--text2)}
@@ -69,8 +70,12 @@ body.sub .brand span{display:none}
 .stab:active{transform:translateY(3px);box-shadow:0 1px 0 #cfccc2}
 .stab.on{background:linear-gradient(180deg,#2f86e6,#1d5fbf);border-color:#1a56ad;box-shadow:0 4px 0 #123f80;color:#fff}
 .stab.on span{color:#dbe9ff}
-#v-mes .pt{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:17px;background:#c9f2d6;color:#0a6a33;font-weight:800;box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
+#v-mes .pt{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:13px;background:#c9f2d6;color:#0a6a33;font-weight:800;box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
 #v-mes td.zero{color:#b7b5ae}
+#v-mes .sorteos td,#v-mes .sorteos th{padding:3px 6px;font-size:15px;height:32px}
+#v-mes .sorteos h2{margin-bottom:4px}
+#v-mes .subtabs.two .stab.on{background:linear-gradient(180deg,#3cc46b,#23934a);border-color:#1f8442;box-shadow:0 4px 0 #17682f}
+#v-mes .subtabs.two .stab.on span{color:#dcffe7}
 #v-hist .sqv{display:inline-flex;align-items:center;justify-content:center;width:46px;height:34px;border-radius:8px;background:#fff;border:1px solid #dedbd2;box-shadow:0 2px 0 #d6d3c9;font-weight:700;color:var(--text)}
 #v-hist .sqv.g{background:#2fae5a;border-color:#23934a;box-shadow:0 2px 0 #1b7a3c;color:#fff}
 #v-hist .sqv.r{background:#e04848;border-color:#c53a3a;box-shadow:0 2px 0 #a52f2f;color:#fff}
@@ -328,7 +333,6 @@ function renderMes(){
         <div class="name">${P[i]}</div>
         <div class="big">${t[i]}</div>
         <div class="sub">puntos</div>
-        ${hi.length<N&&hi.includes(i)?'<span class="badge good">Líder</span>':''}
       </div>`).join('')}</div>
   </div>`:'')+(mesTab==='sem'?`
   ${(()=>{const h=semOf(cur),S=semData(cur.y,h),st=S.tot,so=[0,1,2].sort((a,b)=>st[b]-st[a]),sh=highs(st),sl=lows(st);
@@ -338,7 +342,7 @@ function renderMes(){
     ${S.ms.map(m=>`<tr><td>${label(m)}${m.enCurso?' <span style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}
     ${(()=>{const last=S.ms.length?Math.max(...S.ms.map(m=>m.m)):(h===1?0:6);let r='';for(let mm=last+1;mm<=(h===1?6:12);mm++)r+=`<tr class="fut"><td>${MES[mm-1]}</td><td>–</td><td>–</td><td>–</td></tr>`;return r})()}
     </tbody></table></div></div>`})()}`:'')+(mesTab==='mes'?`
-  <div class="card">
+  <div class="card sorteos">
     <h2>Sorteos de ${label(cur).toUpperCase()}</h2>
     <div class="scroll"><table><thead><tr><th>Día</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
     <tbody>${allDraws(d).map(x=>{if(x.fut)return `<tr class="fut"><td>${DIA[x.wd]} ${x.d}</td><td>–</td><td>–</td><td>–</td><td></td></tr>`;const mx=Math.max(...x.p);return `<tr><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
