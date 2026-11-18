@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795032363">
+<meta name="loto-version" content="1795043234">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -74,6 +74,9 @@ body.sub .brand span{display:none}
 #v-mes td.zero{color:#b7b5ae}
 #v-mes .sorteos td,#v-mes .sorteos th{padding:3px 6px;font-size:15px;height:32px}
 #v-mes .sorteos h2{margin-bottom:4px}
+#v-mes .card{padding:8px 12px;margin-bottom:8px}
+#v-mes .subtabs{margin-bottom:8px}
+#v-mes .sorteos th{height:24px;padding-top:0;padding-bottom:2px}
 #v-mes .subtabs.two .stab.on{background:linear-gradient(180deg,#3cc46b,#23934a);border-color:#1f8442;box-shadow:0 4px 0 #17682f}
 #v-mes .subtabs.two .stab.on span{color:#dcffe7}
 #v-mes .subtabs.two .stab{font-size:16px}
@@ -339,13 +342,13 @@ function renderMes(){
   </div>`:'')+(mesTab==='sem'?`
   ${(()=>{const h=semOf(cur),S=semData(cur.y,h),st=S.tot,so=[0,1,2].sort((a,b)=>st[b]-st[a]),sh=highs(st),sl=lows(st);
     return `<div class="card semcard"><h2>${semName(cur.y,h).toUpperCase()}</h2>
-    <div class="semrank">${so.map((i,k)=>`<div class="sr ${sh.length<N&&sh.includes(i)?'g':sl.length<N&&sl.includes(i)?'r':''}"><span class="pos">${k+1}º</span><span class="nm">${P[i]}</span><b>${st[i]}</b></div>`).join('')}</div>
+    <div class="semrank">${so.map((i,k)=>`<div class="sr ${sh.length<N&&sh.includes(i)?'g':''}"><span class="pos">${k+1}º</span><span class="nm">${P[i]}</span><b>${st[i]}</b></div>`).join('')}</div>
     <div class="scroll"><table><thead><tr><th>Mes</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead><tbody>
     ${S.ms.map(m=>`<tr><td>${label(m)}${m.enCurso?' <span style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}
     ${(()=>{const last=S.ms.length?Math.max(...S.ms.map(m=>m.m)):(h===1?0:6);let r='';for(let mm=last+1;mm<=(h===1?6:12);mm++)r+=`<tr class="fut"><td>${MES[mm-1]}</td><td>–</td><td>–</td><td>–</td></tr>`;return r})()}
     </tbody></table></div></div>`})()}`:'')+(mesTab==='mes'?`
   <div class="card sorteos">
-    <div class="scroll"><table><thead><tr><th>Día</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
+    <div class="scroll"><table><thead><tr><th></th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
     <tbody>${allDraws(d).map(x=>{if(x.fut)return `<tr class="fut"><td>${DIA[x.wd]} ${x.d}</td><td>–</td><td>–</td><td>–</td><td></td></tr>`;const mx=Math.max(...x.p);return `<tr><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
   </div>
   `:'');
