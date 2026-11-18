@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1794905818">
+<meta name="loto-version" content="1794957501">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -61,6 +61,7 @@ body.sub .brand span{display:none}
 .rank .rn{flex:1;min-width:0}
 .rank .rn .bar{height:6px;margin-top:5px}
 .rank b{flex:none;font-size:18px;min-width:26px;text-align:right}
+#v-mes tr.fut td{color:var(--muted);opacity:.6}
 .subtabs.two{grid-template-columns:repeat(2,1fr)}
 .subtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stab{font:inherit;font-weight:700;font-size:15px;color:var(--text);padding:10px 4px 9px;border-radius:12px;border:1px solid #dcd9d0;background:linear-gradient(180deg,#fff,#efede7);box-shadow:0 4px 0 #cfccc2;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .06s,box-shadow .06s;-webkit-tap-highlight-color:transparent}
@@ -285,6 +286,9 @@ let cur=meses[meses.length-1];
 const BASE_N=meses.length;
 const LASTX=(()=>{const m=meses[meses.length-1];const d=Math.max(0,...m.draws.map(x=>x.d||0));return `${m.y}-${String(m.m).padStart(2,'0')}-${String(d).padStart(2,'0')}`})();
 function curDraws(){const extra=(local.draws||[]).map(x=>Object.assign({mine:true},x));return cur.draws.concat(extra).sort((a,b)=>a.d-b.d)}
+function allDraws(d){const out=[],WL=['D','L','M','X','J','V','S'];const ld=new Date(cur.y,cur.m,0).getDate();const used=new Set();
+  for(let k=1;k<=ld;k++){const g=new Date(cur.y,cur.m-1,k).getDay();const ex=d.filter(x=>x.d===k);ex.forEach(x=>{out.push(x);used.add(x)});if(!ex.length&&[1,4,6].includes(g))out.push({d:k,wd:WL[g],fut:true})}
+  d.filter(x=>!used.has(x)).forEach(x=>out.push(x));return out.sort((a,b)=>a.d-b.d)}
 function recalcCur(){const d=curDraws();cur.tot=[0,1,2].map(i=>d.reduce((s,x)=>s+(+x.p[i]||0),0))}
 recalcCur();
 const label=m=>(m.label||MES[m.m-1]);
@@ -332,11 +336,12 @@ function renderMes(){
     <div class="semrank">${so.map((i,k)=>`<div class="sr ${sh.length<N&&sh.includes(i)?'g':sl.length<N&&sl.includes(i)?'r':''}"><span class="pos">${k+1}º</span><span class="nm">${P[i]}</span><b>${st[i]}</b></div>`).join('')}</div>
     <div class="scroll"><table><thead><tr><th>Mes</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead><tbody>
     ${S.ms.map(m=>`<tr><td>${label(m)}${m.enCurso?' <span style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}
+    ${(()=>{const last=S.ms.length?Math.max(...S.ms.map(m=>m.m)):(h===1?0:6);let r='';for(let mm=last+1;mm<=(h===1?6:12);mm++)r+=`<tr class="fut"><td>${MES[mm-1]}</td><td>–</td><td>–</td><td>–</td></tr>`;return r})()}
     </tbody></table></div></div>`})()}`:'')+(mesTab==='mes'?`
   <div class="card">
     <h2>Sorteos de ${label(cur).toUpperCase()}</h2>
     <div class="scroll"><table><thead><tr><th>Día</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
-    <tbody>${d.slice().reverse().map(x=>{const mx=Math.max(...x.p);return `<tr><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
+    <tbody>${allDraws(d).map(x=>{if(x.fut)return `<tr class="fut"><td>${DIA[x.wd]} ${x.d}</td><td>–</td><td>–</td><td>–</td><td></td></tr>`;const mx=Math.max(...x.p);return `<tr><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
   </div>
   `:'');
   document.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{mesTab=b.dataset.mt;renderMes()});
@@ -574,9 +579,9 @@ function renderSemana(){
       <div class="apu"><span class="lbl">R</span><input class="nb rein" id="reIn" inputmode="numeric" maxlength="1" value="${draft.rein===''?'':draft.rein}"><span class="note" style="margin:0">Reintegro (0 a 9)</span></div>
       <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="addA">+ Añadir apuesta</button><button class="btn" id="saveA">Guardar</button><button class="btn ghost" id="cancelA">Cancelar</button></div>`
     :cb&&cb.apuestas.length?`
-      ${cb.apuestas.map((a,k)=>{const h=hitSet?a.filter(n=>hitSet.has(n)).length:0,hc=hitSet&&compl!=null&&a.includes(compl);return `<div class="apn">${apName(k)}</div><div class="apu ap2"><div class="balls">${a.map(n=>ball(n,hitSet&&hitSet.has(n)?'hit':(hc&&n===compl?'hitc':''))).join('')}</div>${hitSet?`<span class="acier ${h>=3?'good':''}">${h}${hc?'+C':''}</span>`:''}</div>`}).join('')}
+      ${cb.apuestas.map((a,k)=>{const h=hitSet?a.filter(n=>hitSet.has(n)).length:0,hc=hitSet&&compl!=null&&a.includes(compl);return `<div class="apn">${apName(k)}</div><div class="apu ap2"><div class="balls">${a.map(n=>ball(n,hitSet&&hitSet.has(n)?'hit':(hc&&n===compl?'hitc':''))).join('')}</div></div>`}).join('')}
       <div class="apu"><span class="lbl">R</span>${cb.reintegro!=null&&cb.reintegro!==''?ball(cb.reintegro,'rein'+(res&&res.r!=null&&res.r===cb.reintegro?' hit':'')).replace(/>0(\d)</,'>$1<'):'<span class="note" style="margin:0">Sin reintegro</span>'}<span class="note" style="margin:0">${res&&res.r!=null&&cb.reintegro!=null?(res.r===cb.reintegro?'¡Reintegro acertado!':'Reintegro'):'Reintegro'}</span></div>
-      ${hitSet?'<p class="note" style="margin:6px 0 0">En verde los números acertados en este sorteo. La cifra de la derecha son los aciertos de cada apuesta.</p>':''}
+      ${hitSet?'<p class="note" style="margin:6px 0 0">En verde los números acertados en este sorteo.</p>':''}
       <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="editA">Corregir números</button><button class="btn ghost" data-go2="boleto">Hacer otra foto</button></div>
       ${cb.foto?`<img class="prev" src="${cb.foto}" alt="Foto del boleto">`:''}`
     :`<p class="note" style="margin:0 0 10px">Aún no hay números para esta semana.</p><div class="btnrow"><button class="btn" data-go2="boleto">Hacer foto del boleto</button><button class="btn ghost" id="editA">Apuntarlos a mano</button></div>`}
