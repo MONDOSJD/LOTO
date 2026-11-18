@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795043417">
+<meta name="loto-version" content="1795043544">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -132,6 +132,13 @@ body.sub .brand span{display:none}
 .sq .t{font-size:18px;font-weight:700}
 .sq .d{font-size:13px;color:var(--text2);margin-top:4px;line-height:1.35}
 .sq.k5 svg{color:#6250d6}
+.grid>.sq:not(.wide):not(.fotobar){aspect-ratio:auto;height:138px;padding:10px 12px;margin-bottom:4px}
+.grid>.sq:not(.wide):not(.fotobar) svg{width:46px;height:46px;margin-top:0}
+.grid>.sq:not(.wide):not(.fotobar) .t{font-size:17px}
+.grid>.sq:not(.wide):not(.fotobar) .d{font-size:12px;margin-top:2px;line-height:1.25}
+.sq.k1 svg{width:36px!important;height:36px!important}
+.sq.k1 .ticker{height:24px;margin-top:4px}.sq.k1 .ticker .tk{height:24px;font-size:13.5px}
+.grid{gap:12px 12px}
 .sq.k6.wide.col{padding-bottom:40px}
 .sq.fotobar{grid-column:1/-1;justify-self:center;width:82%;aspect-ratio:auto;min-height:0;flex-direction:row;justify-content:center;align-items:center;gap:12px;padding:12px 16px;margin-top:-46px;margin-bottom:6px;position:relative;z-index:2;border-radius:16px;
  background:linear-gradient(180deg,#8b7cf0 0%,#6250d6 55%,#5140c2 100%);border:1px solid #4a3ab3;box-shadow:0 5px 0 #392c94,0 9px 14px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.35);color:#fff;font-weight:800;font-size:17px}
@@ -681,13 +688,39 @@ async function readTicket(file){
       if(!o){o={m:new DOMMatrix().rotateAxisAngle(...newAxis(),rnd(0,360)),ax:newAxis(),tgt:newAxis(),sp:rnd(60,130)*(Math.random()<.5?-1:1),t:rnd(1.5,4)};st.set(el,o)}
       o.t-=dt;if(o.t<=0){o.tgt=newAxis();o.t=rnd(1.5,4);if(Math.random()<.3)o.sp=rnd(60,130)*(Math.random()<.5?-1:1)}
       o.ax=unit(o.ax.map((v,i)=>v+(o.tgt[i]-v)*Math.min(1,dt*1.2)));
-      o.m=new DOMMatrix().rotateAxisAngle(o.ax[0],o.ax[1],o.ax[2],o.sp*dt).multiply(o.m);
+      o.m=new DOMMatrix().rotateAxisAngle(o.ax[0],o.ax[1],o.ax[2],o.sp*dt*(now<(window.__bBoost||0)?3.5:1)).multiply(o.m);
       el.style.transform=o.m.toString();
     });
     requestAnimationFrame(tick);
   }
   if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))requestAnimationFrame(tick);
 })();
+
+// ---------- bolas juguetonas al tocarlas ----------
+document.addEventListener('click',e=>{
+  const row=e.target.closest&&e.target.closest('.row6');if(!row)return;
+  e.stopPropagation();e.preventDefault();
+  if(row.dataset.busy)return;row.dataset.busy='1';
+  const bs=[...row.querySelectorAll('.bb')];if(!bs.length)return;
+  const xs=bs.map(b=>b.offsetLeft),dx=xs.length>1?xs[1]-xs[0]:54,cx=(xs[0]+xs[xs.length-1])/2;
+  const T=(x,y,s)=>`translate(${x}px,${y}px)${s?' '+s:''}`;
+  const plays=[
+    // ola
+    ()=>bs.map((b,i)=>b.animate([{transform:T(0,0)},{transform:T(0,-16,'scale(1.06)'),offset:.35},{transform:T(0,0,'scale(1.12,.86)'),offset:.6},{transform:T(0,-5),offset:.8},{transform:T(0,0)}],{duration:650,delay:i*90,iterations:2,easing:'ease-in-out'})),
+    // intercambio por parejas
+    ()=>bs.map((b,i)=>{const d=i%2?-dx:dx,up=i%2?8:-16,dn=i%2?-16:8;return b.animate([{transform:T(0,0)},{transform:T(d/2,up),offset:.25},{transform:T(d,0),offset:.45},{transform:T(d,0),offset:.55},{transform:T(d/2,dn),offset:.75},{transform:T(0,0)}],{duration:1800,easing:'ease-in-out'})}),
+    // choque en el centro
+    ()=>bs.map((b,i)=>{const tx=(cx-xs[i])*.3;return b.animate([{transform:T(0,0)},{transform:T(tx,0),offset:.35},{transform:T(tx,0,'scale(.88,1.1)'),offset:.42},{transform:T(-tx*.4,-14),offset:.65},{transform:T(0,0,'scale(1.08,.9)'),offset:.85},{transform:T(0,0)}],{duration:1300,easing:'ease-out'})}),
+    // carrusel: cada bola salta a la siguiente y la última vuela al principio
+    ()=>bs.map((b,i)=>{const last=i===bs.length-1,d=last?-(bs.length-1)*dx:dx,h=last?-18:-10;return b.animate([{transform:T(0,0)},{transform:T(d/2,h),offset:.4},{transform:T(d,0),offset:.7},{transform:T(d,0),offset:.78},{transform:T(d/2,last?8:-6),offset:.9},{transform:T(0,0)}],{duration:1900,delay:last?0:120,easing:'ease-in-out'})}),
+    // botes a distinto ritmo
+    ()=>bs.map((b,i)=>b.animate([{transform:T(0,0)},{transform:T(0,-(8+((i*7)%10)))},{transform:T(0,0,'scale(1.1,.88)')},{transform:T(0,0)}],{duration:380+i*45,iterations:4,easing:'ease-in-out'}))
+  ];
+  window.__lastPlay=((window.__lastPlay??-1)+1+Math.floor(Math.random()*(plays.length-1)))%plays.length;
+  window.__bBoost=performance.now()+2200;
+  const an=plays[window.__lastPlay]();
+  Promise.all(an.map(a=>a.finished)).finally(()=>{delete row.dataset.busy});
+},true);
 
 // ---- Lector de boletos Primitiva ----
 window.LotoOCR=(function(){
