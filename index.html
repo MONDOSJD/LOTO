@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795031883">
+<meta name="loto-version" content="1795032076">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -76,6 +76,8 @@ body.sub .brand span{display:none}
 #v-mes .sorteos h2{margin-bottom:4px}
 #v-mes .subtabs.two .stab.on{background:linear-gradient(180deg,#3cc46b,#23934a);border-color:#1f8442;box-shadow:0 4px 0 #17682f}
 #v-mes .subtabs.two .stab.on span{color:#dcffe7}
+#v-mes .subtabs.two .stab{font-size:16px}
+#v-mes .subtabs.two .stab.on{font-size:21px}
 #v-hist .sqv{display:inline-flex;align-items:center;justify-content:center;width:46px;height:34px;border-radius:8px;background:#fff;border:1px solid #dedbd2;box-shadow:0 2px 0 #d6d3c9;font-weight:700;color:var(--text)}
 #v-hist .sqv.g{background:#2fae5a;border-color:#23934a;box-shadow:0 2px 0 #1b7a3c;color:#fff}
 #v-hist .sqv.r{background:#e04848;border-color:#c53a3a;box-shadow:0 2px 0 #a52f2f;color:#fff}
@@ -343,7 +345,6 @@ function renderMes(){
     ${(()=>{const last=S.ms.length?Math.max(...S.ms.map(m=>m.m)):(h===1?0:6);let r='';for(let mm=last+1;mm<=(h===1?6:12);mm++)r+=`<tr class="fut"><td>${MES[mm-1]}</td><td>–</td><td>–</td><td>–</td></tr>`;return r})()}
     </tbody></table></div></div>`})()}`:'')+(mesTab==='mes'?`
   <div class="card sorteos">
-    <h2>Sorteos de ${label(cur).toUpperCase()}</h2>
     <div class="scroll"><table><thead><tr><th>Día</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
     <tbody>${allDraws(d).map(x=>{if(x.fut)return `<tr class="fut"><td>${DIA[x.wd]} ${x.d}</td><td>–</td><td>–</td><td>–</td><td></td></tr>`;const mx=Math.max(...x.p);return `<tr><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
   </div>
