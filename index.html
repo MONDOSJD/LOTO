@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795127654">
+<meta name="loto-version" content="1795127938">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -725,7 +725,7 @@ async function readTicket(file){
       if(!o){o={m:new DOMMatrix().rotateAxisAngle(...newAxis(),rnd(0,360)),ax:newAxis(),tgt:newAxis(),sp:rnd(60,130)*(Math.random()<.5?-1:1),t:rnd(1.5,4)};st.set(el,o)}
       o.t-=dt;if(o.t<=0){o.tgt=newAxis();o.t=rnd(1.5,4);if(Math.random()<.3)o.sp=rnd(60,130)*(Math.random()<.5?-1:1)}
       o.ax=unit(o.ax.map((v,i)=>v+(o.tgt[i]-v)*Math.min(1,dt*1.2)));
-      o.m=new DOMMatrix().rotateAxisAngle(o.ax[0],o.ax[1],o.ax[2],o.sp*dt*(now<(window.__bBoost||0)?3.5:1)).multiply(o.m);
+      o.m=new DOMMatrix().rotateAxisAngle(o.ax[0],o.ax[1],o.ax[2],o.sp*dt*(now<(el.__boost||0)?2:1)).multiply(o.m);
       el.style.transform=o.m.toString();
     });
     requestAnimationFrame(tick);
@@ -733,30 +733,11 @@ async function readTicket(file){
   if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))requestAnimationFrame(tick);
 })();
 
-// ---------- bolas juguetonas al tocarlas ----------
+// ---------- al tocar una bola gira un poco más rápido ----------
 document.addEventListener('click',e=>{
-  const row=e.target.closest&&e.target.closest('.row6');if(!row)return;
+  const bb=e.target.closest&&e.target.closest('.row6 .bb');if(!e.target.closest||!e.target.closest('.row6'))return;
   e.stopPropagation();e.preventDefault();
-  if(row.dataset.busy)return;row.dataset.busy='1';
-  const bs=[...row.querySelectorAll('.bb')];if(!bs.length)return;
-  const xs=bs.map(b=>b.offsetLeft),dx=xs.length>1?xs[1]-xs[0]:54,cx=(xs[0]+xs[xs.length-1])/2;
-  const T=(x,y,s)=>`translate(${x}px,${y}px)${s?' '+s:''}`;
-  const plays=[
-    // ola
-    ()=>bs.map((b,i)=>b.animate([{transform:T(0,0)},{transform:T(0,-16,'scale(1.06)'),offset:.35},{transform:T(0,0,'scale(1.12,.86)'),offset:.6},{transform:T(0,-5),offset:.8},{transform:T(0,0)}],{duration:650,delay:i*90,iterations:2,easing:'ease-in-out'})),
-    // intercambio por parejas
-    ()=>bs.map((b,i)=>{const d=i%2?-dx:dx,up=i%2?8:-16,dn=i%2?-16:8;return b.animate([{transform:T(0,0)},{transform:T(d/2,up),offset:.25},{transform:T(d,0),offset:.45},{transform:T(d,0),offset:.55},{transform:T(d/2,dn),offset:.75},{transform:T(0,0)}],{duration:1800,easing:'ease-in-out'})}),
-    // choque en el centro
-    ()=>bs.map((b,i)=>{const tx=(cx-xs[i])*.3;return b.animate([{transform:T(0,0)},{transform:T(tx,0),offset:.35},{transform:T(tx,0,'scale(.88,1.1)'),offset:.42},{transform:T(-tx*.4,-14),offset:.65},{transform:T(0,0,'scale(1.08,.9)'),offset:.85},{transform:T(0,0)}],{duration:1300,easing:'ease-out'})}),
-    // carrusel: cada bola salta a la siguiente y la última vuela al principio
-    ()=>bs.map((b,i)=>{const last=i===bs.length-1,d=last?-(bs.length-1)*dx:dx,h=last?-18:-10;return b.animate([{transform:T(0,0)},{transform:T(d/2,h),offset:.4},{transform:T(d,0),offset:.7},{transform:T(d,0),offset:.78},{transform:T(d/2,last?8:-6),offset:.9},{transform:T(0,0)}],{duration:1900,delay:last?0:120,easing:'ease-in-out'})}),
-    // botes a distinto ritmo
-    ()=>bs.map((b,i)=>b.animate([{transform:T(0,0)},{transform:T(0,-(8+((i*7)%10)))},{transform:T(0,0,'scale(1.1,.88)')},{transform:T(0,0)}],{duration:380+i*45,iterations:4,easing:'ease-in-out'}))
-  ];
-  window.__lastPlay=((window.__lastPlay??-1)+1+Math.floor(Math.random()*(plays.length-1)))%plays.length;
-  window.__bBoost=performance.now()+2200;
-  const an=plays[window.__lastPlay]();
-  Promise.all(an.map(a=>a.finished)).finally(()=>{delete row.dataset.busy});
+  if(bb){const f=bb.querySelector('.bf3');if(f)f.__boost=performance.now()+1500}
 },true);
 
 // ---- Lector de boletos Primitiva ----
