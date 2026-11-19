@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795043615">
+<meta name="loto-version" content="1795095623">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -39,13 +39,13 @@ body:not(.sub) header{display:none}
 body:not(.sub) main{padding-top:20px}
 body.sub .brand span{display:none}
 .bigsel{font-size:20px;font-weight:700;padding:8px 12px;border-radius:12px;min-width:110px}
-#v-mes .tile{text-align:center;padding:6px 4px}
-#v-mes .tile .name{font-size:15px;color:var(--text);text-transform:uppercase;justify-content:center;font-weight:800}
-#v-mes .tile .big{font-size:32px;line-height:1.05;margin-top:0}
-#v-mes .tile .sub{font-size:12px;line-height:1.1}
-#v-mes td,#v-mes th{font-size:18px;padding:11px 6px}
-#v-mes th{font-size:15px;color:var(--text2)}
-#v-mes .card h2{font-size:18px}
+.mesv .tile{text-align:center;padding:6px 4px}
+.mesv .tile .name{font-size:15px;color:var(--text);text-transform:uppercase;justify-content:center;font-weight:800}
+.mesv .tile .big{font-size:32px;line-height:1.05;margin-top:0}
+.mesv .tile .sub{font-size:12px;line-height:1.1}
+.mesv td,.mesv th{font-size:18px;padding:11px 6px}
+.mesv th{font-size:15px;color:var(--text2)}
+.mesv .card h2{font-size:18px}
 #v-hist td,#v-hist th{font-size:19px;padding:6px 8px;line-height:1.25}
 #v-hist th{font-size:15px;color:var(--text2);padding-bottom:6px}
 #v-hist .card{padding:12px 14px}
@@ -62,7 +62,7 @@ body.sub .brand span{display:none}
 .rank .rn{flex:1;min-width:0}
 .rank .rn .bar{height:6px;margin-top:5px}
 .rank b{flex:none;font-size:18px;min-width:26px;text-align:right}
-#v-mes tr.fut td{color:var(--muted);opacity:.6}
+.mesv tr.fut td{color:var(--muted);opacity:.6}
 .subtabs.two{grid-template-columns:repeat(2,1fr)}
 .subtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stab{font:inherit;font-weight:700;font-size:15px;color:var(--text);padding:10px 4px 9px;border-radius:12px;border:1px solid #dcd9d0;background:linear-gradient(180deg,#fff,#efede7);box-shadow:0 4px 0 #cfccc2;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .06s,box-shadow .06s;-webkit-tap-highlight-color:transparent}
@@ -70,17 +70,17 @@ body.sub .brand span{display:none}
 .stab:active{transform:translateY(3px);box-shadow:0 1px 0 #cfccc2}
 .stab.on{background:linear-gradient(180deg,#2f86e6,#1d5fbf);border-color:#1a56ad;box-shadow:0 4px 0 #123f80;color:#fff}
 .stab.on span{color:#dbe9ff}
-#v-mes .pt{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:13px;background:#c9f2d6;color:#0a6a33;font-weight:800;box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
-#v-mes td.zero{color:#b7b5ae}
-#v-mes .sorteos td,#v-mes .sorteos th{padding:3px 6px;font-size:15px;height:32px}
-#v-mes .sorteos h2{margin-bottom:4px}
-#v-mes .card{padding:8px 12px;margin-bottom:8px}
-#v-mes .subtabs{margin-bottom:8px}
-#v-mes .sorteos th{height:24px;padding-top:0;padding-bottom:2px}
-#v-mes .subtabs.two .stab.on{background:linear-gradient(180deg,#3cc46b,#23934a);border-color:#1f8442;box-shadow:0 4px 0 #17682f}
-#v-mes .subtabs.two .stab.on span{color:#dcffe7}
-#v-mes .subtabs.two .stab{font-size:16px}
-#v-mes .subtabs.two .stab.on{font-size:21px}
+.mesv .pt{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:13px;background:#c9f2d6;color:#0a6a33;font-weight:800;box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
+.mesv td.zero{color:#b7b5ae}
+.mesv .sorteos td,.mesv .sorteos th{padding:3px 6px;font-size:15px;height:32px}
+.mesv .sorteos h2{margin-bottom:4px}
+.mesv .card{padding:8px 12px;margin-bottom:8px}
+.mesv .subtabs{margin-bottom:8px}
+.mesv .sorteos th{height:24px;padding-top:0;padding-bottom:2px}
+.mesv .subtabs.two .stab.on{background:linear-gradient(180deg,#3cc46b,#23934a);border-color:#1f8442;box-shadow:0 4px 0 #17682f}
+.mesv .subtabs.two .stab.on span{color:#dcffe7}
+.mesv .subtabs.two .stab{font-size:16px}
+.mesv .subtabs.two .stab.on{font-size:21px}
 #v-hist .sqv{display:inline-flex;align-items:center;justify-content:center;width:46px;height:34px;border-radius:8px;background:#fff;border:1px solid #dedbd2;box-shadow:0 2px 0 #d6d3c9;font-weight:700;color:var(--text)}
 #v-hist .sqv.g{background:#2fae5a;border-color:#23934a;box-shadow:0 2px 0 #1b7a3c;color:#fff}
 #v-hist .sqv.r{background:#e04848;border-color:#c53a3a;box-shadow:0 2px 0 #a52f2f;color:#fff}
@@ -102,6 +102,7 @@ body.sub .brand span{display:none}
 .semrank .sr .pos{font-size:12px;font-weight:800;color:var(--text2)}.semrank .sr .nm{font-weight:700;font-size:15px}.semrank .sr b{font-size:30px;line-height:1.1}
 .semrank .sr.g{background:#2fae5a;border-color:#23934a;box-shadow:0 3px 0 #1b7a3c;color:#fff}.semrank .sr.g .pos{color:#d8ffe4}
 .semrank .sr.r{background:#e04848;border-color:#c53a3a;box-shadow:0 3px 0 #a52f2f;color:#fff}.semrank .sr.r .pos{color:#ffe0e0}
+#v-hist tr.hmrow{cursor:pointer}#v-hist tr.hmrow:active td{background:#eef6ff}#v-hist .chev{color:var(--muted);font-weight:700;margin-left:2px}
 #v-hist tr.semrow td{background:#f5f2ff}#v-hist tr.semrow td:first-child{font-weight:700;color:#4b2386}
 .sq .t{text-shadow:0 1px 0 #fff}
 @media (prefers-color-scheme:dark){.sq{background:linear-gradient(180deg,#2a2a28,#1f1f1d);border-color:#333;box-shadow:0 6px 0 #0e0e0d,0 10px 18px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}.sq .t{text-shadow:none}}
@@ -141,6 +142,7 @@ body.sub .brand span{display:none}
 .grid{gap:12px 12px}
 body:not(.sub),body:not(.sub) main{background:#0b0b0b}
 html{background:#0b0b0b}
+body{min-height:100vh}
 .sq.k6.wide.col{padding-bottom:40px}
 .sq.fotobar{grid-column:1/-1;justify-self:center;width:82%;aspect-ratio:auto;min-height:0;flex-direction:row;justify-content:center;align-items:center;gap:12px;padding:12px 16px;margin-top:-46px;margin-bottom:6px;position:relative;z-index:2;border-radius:16px;
  background:linear-gradient(180deg,#8b7cf0 0%,#6250d6 55%,#5140c2 100%);border:1px solid #4a3ab3;box-shadow:0 5px 0 #392c94,0 9px 14px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.35);color:#fff;font-weight:800;font-size:17px}
@@ -274,7 +276,8 @@ select,input{font:inherit;color:var(--text);background:var(--surface);border:1px
 </header>
 <main>
   <section id="v-inicio"></section>
-  <section id="v-mes"></section>
+  <section id="v-mes" class="mesv"></section>
+  <section id="v-hmes" class="mesv"></section>
   <section id="v-clasif"></section>
   <section id="v-hist"></section>
   <section id="v-cenas"></section>
@@ -340,7 +343,7 @@ function renderMes(){
   else {const gap=t[hi[0]]-Math.max(...t.filter((v,i)=>i!==hi[0]));heroTxt=`Va primero <b>${P[hi[0]]}</b>, con ${gap} punto${gap===1?'':'s'} de ventaja.`}
   const pend=pendientes();
   const SHm=semOf(cur),yy=String(cur.y).slice(2);
-  const tabsH=`<div class="subtabs two"><button class="stab ${mesTab==='mes'?'on':''}" data-mt="mes">${label(cur)}/${yy}<span>Mes en curso</span></button><button class="stab ${mesTab==='sem'?'on':''}" data-mt="sem">${SHm}º semestre/${yy}<span>Semestral</span></button></div>`;
+  const tabsH=`<div class="subtabs two"><button class="stab ${mesTab==='mes'?'on':''}" data-mt="mes">${label(cur)}/${yy}<span>Mes en curso</span></button><button class="stab ${mesTab==='sem'?'on':''}" data-mt="sem">${SHm}º semestre/${yy}<span>Semestre en curso</span></button></div>`;
   $("#v-mes").innerHTML=tabsH+(mesTab==='mes'?`
   <div class="card">
     <div class="tiles">${order.map(i=>`
@@ -470,12 +473,36 @@ function renderHist(){
     </div>
     <div class="scroll"><table>
       <thead><tr><th>Mes</th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead>
-      <tbody>${ms.map(m=>{const lo=lows(m.tot),hi=highs(m.tot),p=payer(m);return `<tr><td>${label(m)}${m.enCurso?' <span class="meta" style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map((v,i)=>`<td><span class="sqv ${lo.length<N&&lo.includes(i)?'r':hi.length<N&&hi.includes(i)?'g':''}">${v}</span></td>`).join('')}</tr>`}).join('')}
+      <tbody>${ms.map(m=>{const lo=lows(m.tot),hi=highs(m.tot),p=payer(m);return `<tr class="hmrow" data-hm="${meses.indexOf(m)}"><td>${label(m)}${m.enCurso?' <span class="meta" style="color:var(--muted);font-size:11px">en curso</span>':''} <span class="chev">›</span></td>${m.tot.map((v,i)=>`<td><span class="sqv ${lo.length<N&&lo.includes(i)?'r':hi.length<N&&hi.includes(i)?'g':''}">${v}</span></td>`).join('')}</tr>`}).join('')}
       ${[1,2].map(h=>{const S=semData(histYear,h);if(!S.ms.length)return '';const hi=highs(S.tot),lo=lows(S.tot);return `<tr class="semrow"><td>${h}º semestre</td>${S.tot.map((v,i)=>`<td><span class="sqv ${lo.length<N&&lo.includes(i)?'r':hi.length<N&&hi.includes(i)?'g':''}">${v}</span></td>`).join('')}</tr>`}).join('')}
       <tr><td><b>Total</b></td>${totY.map(v=>`<td><b>${v}</b></td>`).join('')}</tr></tbody>
     </table></div>
   </div>`;
   $('#hx').innerHTML=`<select id="hSel" class="bigsel">${years.map(y=>`<option ${y===histYear?'selected':''}>${y}</option>`).join('')}</select>`;$('#hSel').onchange=e=>{histYear=+e.target.value;renderHist()};
+  document.querySelectorAll('.hmrow').forEach(r=>r.onclick=()=>{const m=meses[+r.dataset.hm];if(m===cur){location.hash='mes';return}hmIdx=+r.dataset.hm;try{sessionStorage.setItem('lotoHM',hmIdx)}catch(e){}location.hash='hmes'});
+}
+
+// ---------- DETALLE DE UN MES DEL HISTÓRICO ----------
+let hmIdx=(()=>{try{const v=sessionStorage.getItem('lotoHM');return v==null?null:+v}catch(e){return null}})();
+function renderHMes(){
+  const m=meses[hmIdx];if(!m){location.hash='hist';return}
+  const t=m.tot,hi=highs(t),order=[0,1,2].sort((a,b)=>t[b]-t[a]);
+  const sh=shares(m),pg=m.pago;
+  $('#v-hmes').innerHTML=`
+  <div class="card">
+    <div class="tiles">${order.map(i=>`
+      <div class="tile ${hi.length<N&&hi.includes(i)?'lead':''}">
+        <div class="name">${P[i]}</div>
+        <div class="big">${t[i]}</div>
+        <div class="sub">${sh[i]<1e-9?'no paga':'paga '+frac(sh[i])}</div>
+      </div>`).join('')}</div>
+    ${pg?`<p class="note" style="margin:8px 0 0;text-align:center">Cena${pg.sitio?' en <b>'+pg.sitio+'</b>':''}${pg.fecha?' · '+pg.fecha.split('-').reverse().join('/'):''}</p>`:''}
+  </div>
+  <div class="card sorteos">
+    ${m.draws.length?`<div class="scroll"><table><thead><tr><th></th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead>
+    <tbody>${m.draws.slice().sort((a,b)=>a.d-b.d).map(x=>`<tr><td>${DIA[x.wd]||''} ${x.d}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`
+    :`<p class="note" style="margin:4px 0;text-align:center">En el Excel de este mes solo están los totales, no el detalle de cada sorteo.</p>`}
+  </div>`;
 }
 
 // ---------- CENAS ----------
@@ -858,10 +885,10 @@ function renderInicio(){
   document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.go});
 }
 // ---------- nav ----------
-const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:()=>{$('#v-clasif').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán las marcas y récords. Próximamente.</p></div>'},hist:renderHist,cenas:renderCenas};
+const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:()=>{$('#v-clasif').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán las marcas y récords. Próximamente.</p></div>'},hist:renderHist,hmes:renderHMes,cenas:renderCenas};
 let view='inicio';
 const TT={saldos:'Saldos',premios:'Premios',semana:'Números de la semana',boleto:'Boleto',mes:'',clasif:'Récords',hist:'Histórico',cenas:'Cenas'};
-function show(v){view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?'Clasificación':(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
+function show(v){view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?'Clasificación':v==='hmes'&&meses[hmIdx]?`${label(meses[hmIdx]).toUpperCase()} ${meses[hmIdx].y}`:(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
 function renderAll(){R[view]()}
 $('#back').onclick=()=>{if(history.length>1&&view!=='inicio'&&sessionStorage.getItem('lotoNav'))history.back();else location.hash='inicio'};
 addEventListener('hashchange',()=>{try{sessionStorage.setItem('lotoNav','1')}catch(e){}const h=location.hash.slice(1);show(R[h]?h:'inicio')});
