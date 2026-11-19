@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795095623">
+<meta name="loto-version" content="1795095763">
 <link rel="manifest" href="manifest.json?v=11">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=11">
 <link rel="icon" href="icon-192.png?v=11">
@@ -209,6 +209,7 @@ body{min-height:100vh}
 .apu .x{margin-left:auto;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer}
 .prev{max-width:100%;border-radius:10px;margin-top:10px;display:block}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.btnrow.b3{flex-wrap:nowrap;gap:6px}.btnrow.b3 .btn{flex:1 1 0;min-width:0;padding-left:2px;padding-right:2px;font-size:12.5px;white-space:nowrap}
 .btnrow label.btn{display:inline-block}
 .sq.k1 svg{color:#2a78d6}
 .sq.k7 svg{color:#0f8a6a}.sq.k8 svg{color:#c99a00}.sq.k2 svg{color:#c98500}.sq.k3 svg{color:#1baf7a}.sq.k4 svg{color:#eb6834}
@@ -594,7 +595,7 @@ function getRes(){let m={};try{m=JSON.parse(localStorage.getItem(RKEY)||'{}')}ca
 function setRes(o){try{localStorage.setItem(RKEY,JSON.stringify(o))}catch(e){}}
 let selDay=null,resEdit=false;
 function weekTxt(k){const [y,m,d]=k.split('-').map(Number);const a=new Date(y,m-1,d),b=new Date(y,m-1,d+6);return `${a.getDate()} ${MES[a.getMonth()].slice(0,3).toLowerCase()} – ${b.getDate()} ${MES[b.getMonth()].slice(0,3).toLowerCase()}`}
-let draft=null, ocrState='', editMode=false, semMsg='';
+let draft=null, ocrState='', editMode=false, semMsg='', showFoto=false;
 const ball=(n,cls='')=>`<span class="nb ${cls}" style="display:inline-flex;align-items:center;justify-content:center">${String(n).padStart(2,'0')}</span>`;
 const apName=k=>k<P.length?P[k]:`Apuesta ${k+1}`;
 function curBol(){const b=getBol();return b&&b.semana===weekKey()?b:null}
@@ -627,11 +628,12 @@ function renderSemana(){
       ${cb.apuestas.map((a,k)=>{const h=hitSet?a.filter(n=>hitSet.has(n)).length:0,hc=hitSet&&compl!=null&&a.includes(compl);return `<div class="apn">${apName(k)}</div><div class="apu ap2"><div class="balls">${a.map(n=>ball(n,hitSet&&hitSet.has(n)?'hit':(hc&&n===compl?'hitc':''))).join('')}</div></div>`}).join('')}
       <div class="apu">${cb.reintegro!=null&&cb.reintegro!==''?ball(cb.reintegro,'rein'+(res&&res.r!=null&&res.r===cb.reintegro?' hit':'')).replace(/>0(\d)</,'>$1<'):'<span class="note" style="margin:0">Sin reintegro</span>'}<span class="note" style="margin:0">${res&&res.r!=null&&cb.reintegro!=null?(res.r===cb.reintegro?'¡Reintegro acertado!':'Reintegro'):'Reintegro'}</span></div>
       ${hitSet?'<p class="note" style="margin:6px 0 0">En verde los números acertados en este sorteo.</p>':''}
-      <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="editA">Corregir números</button><button class="btn ghost" data-go2="boleto">Hacer otra foto</button></div>
-      ${cb.foto?`<img class="prev" src="${cb.foto}" alt="Foto del boleto">`:''}`
+      <div class="btnrow b3" style="margin-top:10px"><button class="btn ghost" id="editA">Corregir números</button><button class="btn ghost" data-go2="boleto">Hacer otra foto</button>${cb.foto?`<button class="btn ${showFoto?'':'ghost'}" id="fotoA">${showFoto?'Ocultar foto':'Foto actual'}</button>`:''}</div>
+      ${cb.foto&&showFoto?`<img class="prev" id="fotoImg" src="${cb.foto}" alt="Foto del boleto">`:''}`
     :`<p class="note" style="margin:0 0 10px">Aún no hay números para esta semana.</p><div class="btnrow"><button class="btn" data-go2="boleto">Hacer foto del boleto</button><button class="btn ghost" id="editA">Apuntarlos a mano</button></div>`}
   </div>`;
   document.querySelectorAll('#v-semana [data-go2]').forEach(x=>x.onclick=()=>{location.hash=x.dataset.go2});
+  const fa=$('#fotoA');if(fa)fa.onclick=()=>{showFoto=!showFoto;renderSemana();if(showFoto){const im=$('#fotoImg');if(im)im.scrollIntoView({behavior:'smooth',block:'start'})}};
   const ed=$('#editA');if(ed)ed.onclick=()=>{editMode=true;draft=null;semMsg='';renderSemana()};
   document.querySelectorAll('#v-semana [data-day]').forEach(x=>x.onclick=()=>{selDay=x.dataset.day;resEdit=false;renderSemana()});
   const re=$('#rEdit');if(re)re.onclick=()=>{resEdit=true;renderSemana()};
@@ -888,7 +890,7 @@ function renderInicio(){
 const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:()=>{$('#v-clasif').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán las marcas y récords. Próximamente.</p></div>'},hist:renderHist,hmes:renderHMes,cenas:renderCenas};
 let view='inicio';
 const TT={saldos:'Saldos',premios:'Premios',semana:'Números de la semana',boleto:'Boleto',mes:'',clasif:'Récords',hist:'Histórico',cenas:'Cenas'};
-function show(v){view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?'Clasificación':v==='hmes'&&meses[hmIdx]?`${label(meses[hmIdx]).toUpperCase()} ${meses[hmIdx].y}`:(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
+function show(v){if(v!==view)showFoto=false;view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?'Clasificación':v==='hmes'&&meses[hmIdx]?`${label(meses[hmIdx]).toUpperCase()} ${meses[hmIdx].y}`:(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
 function renderAll(){R[view]()}
 $('#back').onclick=()=>{if(history.length>1&&view!=='inicio'&&sessionStorage.getItem('lotoNav'))history.back();else location.hash='inicio'};
 addEventListener('hashchange',()=>{try{sessionStorage.setItem('lotoNav','1')}catch(e){}const h=location.hash.slice(1);show(R[h]?h:'inicio')});
