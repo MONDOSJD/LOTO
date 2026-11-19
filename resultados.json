@@ -739,5 +739,62 @@
     "ganadores": "526031"
    }
   ]
+ },
+ "2026-11-19": {
+  "n": [
+   20,
+   23,
+   36,
+   41,
+   44,
+   49
+  ],
+  "c": 34,
+  "r": 3,
+  "bote": "0",
+  "escrutinio": [
+   {
+    "tipo": "Especial (6 Aciertos + R)",
+    "cat": 1,
+    "premio": "0",
+    "ganadores": "0"
+   },
+   {
+    "tipo": "1ª (6 Aciertos)",
+    "cat": 2,
+    "premio": "1204847,63",
+    "ganadores": "1"
+   },
+   {
+    "tipo": "2ª (5 Aciertos + C)",
+    "cat": 3,
+    "premio": "97690,35",
+    "ganadores": "2"
+   },
+   {
+    "tipo": "3ª (5 Aciertos)",
+    "cat": 4,
+    "premio": "2960,31",
+    "ganadores": "121"
+   },
+   {
+    "tipo": "4ª (4 Aciertos)",
+    "cat": 5,
+    "premio": "73,23",
+    "ganadores": "7115"
+   },
+   {
+    "tipo": "5ª (3 Aciertos)",
+    "cat": 6,
+    "premio": "8",
+    "ganadores": "140072"
+   },
+   {
+    "tipo": "Reintegro",
+    "cat": 7,
+    "premio": "1",
+    "ganadores": "997301"
+   }
+  ]
  }
 }
