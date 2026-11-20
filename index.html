@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795184538">
+<meta name="loto-version" content="1795185857">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -220,7 +220,8 @@ body{min-height:100vh}
 #v-boleto h2{font-size:22px}
 .bolTxt{font-size:18px;line-height:1.45;color:var(--text);margin:0 0 16px}
 .bolBtns{display:flex;flex-direction:column;gap:14px}
-.bolBtns label{display:flex;align-items:center;justify-content:center;gap:10px;min-height:62px;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .06s,box-shadow .06s}
+.bolBtns label svg{width:32px;height:32px;flex:none}
+.bolBtns label{display:flex;align-items:center;justify-content:flex-start;padding:0 20px;gap:14px;min-height:62px;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .06s,box-shadow .06s}
 .bolBtns .bb1{background:linear-gradient(180deg,#8b7cf0,#6250d6 55%,#5140c2);color:#fff;border:1px solid #4a3ab3;box-shadow:0 5px 0 #392c94,0 8px 14px rgba(0,0,0,.2)}
 .bolBtns .bb2{background:linear-gradient(180deg,#fff,#efede7);color:#2c2560;border:2px solid #6250d6;box-shadow:0 5px 0 #b9b2e6}
 .bolBtns label:active{transform:translateY(4px);box-shadow:0 1px 0 #392c94}
@@ -683,8 +684,8 @@ function renderBoleto(){
   <div class="card">
     <p class="bolTxt">Haz la foto de frente, con buena luz y que se vean bien los números y el reintegro. Al terminar de leerlos pasan solos a "Números de la semana".</p>
     <div class="bolBtns">
-      <label class="bb1">📷 Hacer foto<input id="camIn" type="file" accept="image/*" capture="environment" hidden></label>
-      <label class="bb2">🖼️ Elegir de la galería<input id="galIn" type="file" accept="image/*" hidden></label>
+      <label class="bb1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.8"/></svg><span>Hacer foto</span><input id="camIn" type="file" accept="image/*" capture="environment" hidden></label>
+      <label class="bb2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 16l-5.5-5.5L5 20"/></svg><span>Elegir de la galería</span><input id="galIn" type="file" accept="image/*" hidden></label>
     </div>
     ${ocrState?`<p class="bolTxt" id="ocrN" style="margin:14px 0 0">${ocrState}</p>`:''}
   </div>`;
