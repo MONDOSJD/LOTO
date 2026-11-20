@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795127938">
+<meta name="loto-version" content="1795183898">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -214,6 +214,22 @@ body{min-height:100vh}
 .apu .x{margin-left:auto;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer}
 .prev{max-width:100%;border-radius:10px;margin-top:10px;display:block}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.sq.k6:has(.row6:active),.sq.k6:has(.row6:active):active{transform:none!important}
+.sq.k6:has(.row6:active){box-shadow:0 6px 0 #cfccc2,0 10px 18px rgba(0,0,0,.14),inset 0 2px 0 rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.05)!important}
+.row6 .bb{cursor:pointer;-webkit-tap-highlight-color:transparent}
+#v-boleto h2{font-size:22px}
+.bolTxt{font-size:18px;line-height:1.45;color:var(--text);margin:0 0 16px}
+.bolBtns{display:flex;flex-direction:column;gap:14px}
+.bolBtns label{display:flex;align-items:center;justify-content:center;gap:10px;min-height:62px;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .06s,box-shadow .06s}
+.bolBtns .bb1{background:linear-gradient(180deg,#8b7cf0,#6250d6 55%,#5140c2);color:#fff;border:1px solid #4a3ab3;box-shadow:0 5px 0 #392c94,0 8px 14px rgba(0,0,0,.2)}
+.bolBtns .bb2{background:linear-gradient(180deg,#fff,#efede7);color:#2c2560;border:2px solid #6250d6;box-shadow:0 5px 0 #b9b2e6}
+.bolBtns label:active{transform:translateY(4px);box-shadow:0 1px 0 #392c94}
+#fotoOv{display:none;position:fixed;inset:0;z-index:100;background:#000}
+#fotoOv.on{display:block}
+#fotoOv .fz{position:absolute;inset:0;overflow:auto;display:flex;align-items:center;justify-content:center;touch-action:pinch-zoom pan-x pan-y}
+#fotoOv img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+#fotoOv .fx{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:34px;line-height:48px;padding:0;cursor:pointer}
+body.noscroll{overflow:hidden}
 .btnrow.b2{flex-wrap:nowrap;gap:8px}.btnrow.b2 .btn{flex:1 1 0;min-width:0;padding:12px 8px;font-size:16px;line-height:1.2;font-weight:700;border-radius:14px;white-space:normal;min-height:62px}
 .btnrow.b3{flex-wrap:nowrap;gap:6px}.btnrow.b3 .btn{flex:1 1 0;min-width:0;padding-left:2px;padding-right:2px;font-size:12.5px;white-space:nowrap}
 .btnrow label.btn{display:inline-block}
@@ -634,12 +650,11 @@ function renderSemana(){
       ${cb.apuestas.map((a,k)=>{const h=hitSet?a.filter(n=>hitSet.has(n)).length:0,hc=hitSet&&compl!=null&&a.includes(compl);return `<div class="apn">${apName(k)}</div><div class="apu ap2"><div class="balls">${a.map(n=>ball(n,hitSet&&hitSet.has(n)?'hit':(hc&&n===compl?'hitc':''))).join('')}</div></div>`}).join('')}
       <div class="apu">${cb.reintegro!=null&&cb.reintegro!==''?ball(cb.reintegro,'rein'+(res&&res.r!=null&&res.r===cb.reintegro?' hit':'')).replace(/>0(\d)</,'>$1<'):'<span class="note" style="margin:0">Sin reintegro</span>'}<span class="note" style="margin:0">${res&&res.r!=null&&cb.reintegro!=null?(res.r===cb.reintegro?'¡Reintegro acertado!':'Reintegro'):'Reintegro'}</span></div>
       ${hitSet?'<p class="note" style="margin:6px 0 0">En verde los números acertados en este sorteo.</p>':''}
-      <div class="btnrow b2" style="margin-top:12px"><button class="btn ghost" data-go2="boleto">Realizar nueva foto</button>${cb.foto?`<button class="btn ${showFoto?'':'ghost'}" id="fotoA">${showFoto?'Ocultar foto':'Consultar foto actual'}</button>`:''}</div>
-      ${cb.foto&&showFoto?`<img class="prev" id="fotoImg" src="${cb.foto}" alt="Foto del boleto">`:''}`
+      <div class="btnrow b2" style="margin-top:12px"><button class="btn ghost" data-go2="boleto">Realizar nueva foto</button>${cb.foto?`<button class="btn ghost" id="fotoA">Consultar foto actual</button>`:''}</div>`
     :`<p class="note" style="margin:0 0 10px">Aún no hay números para esta semana.</p><div class="btnrow"><button class="btn" data-go2="boleto">Hacer foto del boleto</button><button class="btn ghost" id="editA">Apuntarlos a mano</button></div>`}
   </div>`;
   document.querySelectorAll('#v-semana [data-go2]').forEach(x=>x.onclick=()=>{location.hash=x.dataset.go2});
-  const fa=$('#fotoA');if(fa)fa.onclick=()=>{showFoto=!showFoto;renderSemana();if(showFoto){const im=$('#fotoImg');if(im)im.scrollIntoView({behavior:'smooth',block:'start'})}};
+  const fa=$('#fotoA');if(fa)fa.onclick=()=>openFoto(cb.foto);
   const ed=$('#editA');if(ed)ed.onclick=()=>{editMode=true;draft=null;semMsg='';renderSemana()};
   document.querySelectorAll('#v-semana [data-day]').forEach(x=>x.onclick=()=>{selDay=x.dataset.day;resEdit=false;renderSemana()});
   const re=$('#rEdit');if(re)re.onclick=()=>{resEdit=true;renderSemana()};
@@ -667,12 +682,12 @@ function renderBoleto(){
   $('#v-boleto').innerHTML=`
   <div class="card">
     <h2>Foto del boleto</h2>
-    <p class="note" style="margin:0 0 12px">Haz la foto de frente, con buena luz y que se vean bien los números y el reintegro. Al terminar de leerlos pasan solos a "Números de la semana".</p>
-    <div class="btnrow">
-      <label class="btn">Hacer foto<input id="camIn" type="file" accept="image/*" capture="environment" hidden></label>
-      <label class="btn ghost">Elegir de la galería<input id="galIn" type="file" accept="image/*" hidden></label>
+    <p class="bolTxt">Haz la foto de frente, con buena luz y que se vean bien los números y el reintegro. Al terminar de leerlos pasan solos a "Números de la semana".</p>
+    <div class="bolBtns">
+      <label class="bb1">📷 Hacer foto<input id="camIn" type="file" accept="image/*" capture="environment" hidden></label>
+      <label class="bb2">🖼️ Elegir de la galería<input id="galIn" type="file" accept="image/*" hidden></label>
     </div>
-    ${ocrState?`<p class="note" id="ocrN">${ocrState}</p>`:''}
+    ${ocrState?`<p class="bolTxt" id="ocrN" style="margin:14px 0 0">${ocrState}</p>`:''}
   </div>`;
   const onFile=e=>{const f=e.target.files&&e.target.files[0];if(f)readTicket(f)};
   $('#camIn').onchange=onFile;$('#galIn').onchange=onFile;
@@ -725,7 +740,7 @@ async function readTicket(file){
       if(!o){o={m:new DOMMatrix().rotateAxisAngle(...newAxis(),rnd(0,360)),ax:newAxis(),tgt:newAxis(),sp:rnd(60,130)*(Math.random()<.5?-1:1),t:rnd(1.5,4)};st.set(el,o)}
       o.t-=dt;if(o.t<=0){o.tgt=newAxis();o.t=rnd(1.5,4);if(Math.random()<.3)o.sp=rnd(60,130)*(Math.random()<.5?-1:1)}
       o.ax=unit(o.ax.map((v,i)=>v+(o.tgt[i]-v)*Math.min(1,dt*1.2)));
-      o.m=new DOMMatrix().rotateAxisAngle(o.ax[0],o.ax[1],o.ax[2],o.sp*dt*(now<(el.__boost||0)?2:1)).multiply(o.m);
+      o.m=new DOMMatrix().rotateAxisAngle(o.ax[0],o.ax[1],o.ax[2],o.sp*dt*(now<(el.__boost||0)?6:1)).multiply(o.m);
       el.style.transform=o.m.toString();
     });
     requestAnimationFrame(tick);
@@ -733,11 +748,21 @@ async function readTicket(file){
   if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))requestAnimationFrame(tick);
 })();
 
+// ---------- foto del boleto a pantalla completa ----------
+function openFoto(src){
+  let ov=document.getElementById('fotoOv');
+  if(!ov){ov=document.createElement('div');ov.id='fotoOv';ov.innerHTML='<div class="fz"><img alt="Foto del boleto"></div><button class="fx" aria-label="Cerrar">×</button>';document.body.appendChild(ov);
+    ov.querySelector('.fx').onclick=()=>history.back();}
+  ov.querySelector('img').src=src;ov.classList.add('on');document.body.classList.add('noscroll');
+  history.pushState({foto:1},'',location.href);
+}
+addEventListener('popstate',()=>{const ov=document.getElementById('fotoOv');if(ov&&ov.classList.contains('on')){ov.classList.remove('on');document.body.classList.remove('noscroll')}});
+
 // ---------- al tocar una bola gira un poco más rápido ----------
 document.addEventListener('click',e=>{
   const bb=e.target.closest&&e.target.closest('.row6 .bb');if(!e.target.closest||!e.target.closest('.row6'))return;
   e.stopPropagation();e.preventDefault();
-  if(bb){const f=bb.querySelector('.bf3');if(f)f.__boost=performance.now()+1500}
+  if(bb){const f=bb.querySelector('.bf3');if(f)f.__boost=performance.now()+3000}
 },true);
 
 // ---- Lector de boletos Primitiva ----
