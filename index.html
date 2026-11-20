@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795183898">
+<meta name="loto-version" content="1795184538">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -681,7 +681,6 @@ function renderSemana(){
 function renderBoleto(){
   $('#v-boleto').innerHTML=`
   <div class="card">
-    <h2>Foto del boleto</h2>
     <p class="bolTxt">Haz la foto de frente, con buena luz y que se vean bien los números y el reintegro. Al terminar de leerlos pasan solos a "Números de la semana".</p>
     <div class="bolBtns">
       <label class="bb1">📷 Hacer foto<input id="camIn" type="file" accept="image/*" capture="environment" hidden></label>
@@ -902,7 +901,7 @@ function renderInicio(){
 // ---------- nav ----------
 const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:()=>{$('#v-clasif').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán las marcas y récords. Próximamente.</p></div>'},hist:renderHist,hmes:renderHMes,cenas:renderCenas};
 let view='inicio';
-const TT={saldos:'Saldos',premios:'Premios',semana:'Números de la semana',boleto:'Boleto',mes:'',clasif:'Récords',hist:'Histórico',cenas:'Cenas'};
+const TT={saldos:'Saldos',premios:'Premios',semana:'Números de la semana',boleto:'Hacer foto o subir boleto',mes:'',clasif:'Récords',hist:'Histórico',cenas:'Cenas'};
 function show(v){if(v!==view)showFoto=false;view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?'Clasificación':v==='hmes'&&meses[hmIdx]?`${label(meses[hmIdx]).toUpperCase()} ${meses[hmIdx].y}`:(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
 function renderAll(){R[view]()}
 $('#back').onclick=()=>{if(history.length>1&&view!=='inicio'&&sessionStorage.getItem('lotoNav'))history.back();else location.hash='inicio'};
