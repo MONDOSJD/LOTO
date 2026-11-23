@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795185857">
+<meta name="loto-version" content="1795421231">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -231,6 +231,8 @@ body{min-height:100vh}
 #fotoOv img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 #fotoOv .fx{position:absolute;top:calc(12px + env(safe-area-inset-top));right:12px;width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:34px;line-height:48px;padding:0;cursor:pointer}
 body.noscroll{overflow:hidden}
+.mesv tr.drow{cursor:pointer}.mesv tr.drow:active td{background:#eef6ff}.mesv .chev{color:var(--muted);font-weight:700}
+.wklbl{margin:0 0 10px;font-weight:800;font-size:16px;text-align:center;color:var(--text2)}
 .btnrow.b2{flex-wrap:nowrap;gap:8px}.btnrow.b2 .btn{flex:1 1 0;min-width:0;padding:12px 8px;font-size:16px;line-height:1.2;font-weight:700;border-radius:14px;white-space:normal;min-height:62px}
 .btnrow.b3{flex-wrap:nowrap;gap:6px}.btnrow.b3 .btn{flex:1 1 0;min-width:0;padding-left:2px;padding-right:2px;font-size:12.5px;white-space:nowrap}
 .btnrow label.btn{display:inline-block}
@@ -386,10 +388,11 @@ function renderMes(){
     </tbody></table></div></div>`})()}`:'')+(mesTab==='mes'?`
   <div class="card sorteos">
     <div class="scroll"><table><thead><tr><th></th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}<th></th></tr></thead>
-    <tbody>${allDraws(d).map(x=>{if(x.fut)return `<tr class="fut"><td>${DIA[x.wd]} ${x.d}</td><td>–</td><td>–</td><td>–</td><td></td></tr>`;const mx=Math.max(...x.p);return `<tr><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''}</td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
+    <tbody>${allDraws(d).map(x=>{if(x.fut)return `<tr class="fut drow" data-dd="${cur.y}-${String(cur.m).padStart(2,'0')}-${String(x.d).padStart(2,'0')}"><td>${DIA[x.wd]} ${x.d}</td><td>–</td><td>–</td><td>–</td><td></td></tr>`;const mx=Math.max(...x.p);return `<tr class="drow" data-dd="${cur.y}-${String(cur.m).padStart(2,'0')}-${String(x.d).padStart(2,'0')}"><td>${DIA[x.wd]||''} ${x.d} ${x.mine?'<span class="mine">nuevo</span>':''} <span class="chev">›</span></td>${x.p.map(v=>v>0?`<td><span class="pt">${v}</span></td>`:`<td class="zero">${v}</td>`).join('')}<td>${x.mine?`<button class="btn ghost" data-del="${x.id}" style="padding:4px 8px;font-size:12px">Quitar</button>`:''}</td></tr>`}).join('')}</tbody></table></div>
   </div>
   `:'');
   document.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{mesTab=b.dataset.mt;renderMes()});
+  document.querySelectorAll('#v-mes .drow').forEach(r=>r.onclick=()=>{const [y,m,d]=r.dataset.dd.split('-').map(Number);semWk=weekKey(new Date(y,m-1,d));selDay=r.dataset.dd;resEdit=false;editMode=false;semMsg='';location.hash='semana'});
   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{local.draws=(local.draws||[]).filter(x=>x.id!=b.dataset.del);saveLocal();renderAll()});
 }
 function nextDay(d){const last=d.length?d[d.length-1].d:0;for(let k=last+1;k<=31;k++){const g=new Date(cur.y,cur.m-1,k);if(g.getMonth()!==cur.m-1)break;if([1,4,6].includes(g.getDay()))return k}return last+1}
@@ -622,8 +625,10 @@ let draft=null, ocrState='', editMode=false, semMsg='', showFoto=false;
 const ball=(n,cls='')=>`<span class="nb ${cls}" style="display:inline-flex;align-items:center;justify-content:center">${String(n).padStart(2,'0')}</span>`;
 const apName=k=>k<P.length?P[k]:`Apuesta ${k+1}`;
 function curBol(){const b=getBol();return b&&b.semana===weekKey()?b:null}
+let semWk=null;
 function renderSemana(){
-  const wk=weekKey(), cb=curBol();
+  const nowWk=weekKey(), wk=semWk||nowWk, past=wk!==nowWk;
+  const cb=past?(()=>{const h=getHist()[wk];return h&&h.apuestas&&h.apuestas.length?{semana:wk,apuestas:h.apuestas,reintegro:h.reintegro}:null})():curBol();
   const days=drawDays(wk);if(!selDay||!days.some(o=>o.k===selDay)){const t=iso(new Date());const past=days.filter(o=>o.k<=t);selDay=(past.length?past[past.length-1]:days[0]).k}
   const RS=getRes(), res=RS[selDay], selO=days.find(o=>o.k===selDay);
   const selTxt=`${({Lun:'Lunes',Jue:'Jueves','Sáb':'Sábado'})[selO.n]} ${selO.x.getDate()} de ${MES[selO.x.getMonth()].toLowerCase()}`;
@@ -631,6 +636,7 @@ function renderSemana(){
   if(editMode&&!draft){draft=cb?cb.apuestas.map(a=>a.slice()):[['','','','','','']];while(draft.some(a=>a.length<6))draft.forEach(a=>{while(a.length<6)a.push('')});draft.rein=cb&&cb.reintegro!=null?cb.reintegro:''}
   $('#v-semana').innerHTML=`
   <div class="card">
+    ${past?`<p class="wklbl">Semana del ${weekTxt(wk)}</p>`:''}
     <div class="dchips">${drawDates(wk)}</div>
     <div class="respanel">
       <div class="rtitle">Resultado · ${selTxt}${res&&res.oficial?' <span class="ofi">Oficial</span>':''}</div>
@@ -640,7 +646,7 @@ function renderSemana(){
       :res?`<div class="balls" style="margin:8px 0">${res.n.map(n=>ball(n,'win')).join('')}</div>
         <div class="rmeta">${res.c!=null?`Complementario <b>${String(res.c).padStart(2,'0')}</b>`:''}${res.r!=null?` &nbsp;·&nbsp; Reintegro <b>${res.r}</b>`:''}</div>
         ${res.oficial?'':'<button class="linkbtn" id="rEdit">Corregir resultado</button>'}`
-      :`<p class="note" style="margin:6px 0 8px">Aún no está el resultado de este sorteo.</p><button class="btn ghost" id="rEdit">Apuntar resultado</button>`}
+      :`<p class="note" style="margin:6px 0 8px">${selDay<iso(new Date())?'No hay guardado el resultado de este sorteo.':'Aún no está el resultado de este sorteo.'}</p><button class="btn ghost" id="rEdit">Apuntar resultado</button>`}
     </div>
     ${semMsg?`<p class="note" style="margin:0 0 10px">${semMsg}</p>`:''}
     ${editMode?`
@@ -651,8 +657,8 @@ function renderSemana(){
       ${cb.apuestas.map((a,k)=>{const h=hitSet?a.filter(n=>hitSet.has(n)).length:0,hc=hitSet&&compl!=null&&a.includes(compl);return `<div class="apn">${apName(k)}</div><div class="apu ap2"><div class="balls">${a.map(n=>ball(n,hitSet&&hitSet.has(n)?'hit':(hc&&n===compl?'hitc':''))).join('')}</div></div>`}).join('')}
       <div class="apu">${cb.reintegro!=null&&cb.reintegro!==''?ball(cb.reintegro,'rein'+(res&&res.r!=null&&res.r===cb.reintegro?' hit':'')).replace(/>0(\d)</,'>$1<'):'<span class="note" style="margin:0">Sin reintegro</span>'}<span class="note" style="margin:0">${res&&res.r!=null&&cb.reintegro!=null?(res.r===cb.reintegro?'¡Reintegro acertado!':'Reintegro'):'Reintegro'}</span></div>
       ${hitSet?'<p class="note" style="margin:6px 0 0">En verde los números acertados en este sorteo.</p>':''}
-      <div class="btnrow b2" style="margin-top:12px"><button class="btn ghost" data-go2="boleto">Realizar nueva foto</button>${cb.foto?`<button class="btn ghost" id="fotoA">Consultar foto actual</button>`:''}</div>`
-    :`<p class="note" style="margin:0 0 10px">Aún no hay números para esta semana.</p><div class="btnrow"><button class="btn" data-go2="boleto">Hacer foto del boleto</button><button class="btn ghost" id="editA">Apuntarlos a mano</button></div>`}
+      ${past?'':`<div class="btnrow b2" style="margin-top:12px"><button class="btn ghost" data-go2="boleto">Realizar nueva foto</button>${cb.foto?`<button class="btn ghost" id="fotoA">Consultar foto actual</button>`:''}</div>`}`
+    :past?`<p class="note" style="margin:0">No hay guardados los números de esa semana.</p>`:`<p class="note" style="margin:0 0 10px">Aún no hay números para esta semana.</p><div class="btnrow"><button class="btn" data-go2="boleto">Hacer foto del boleto</button><button class="btn ghost" id="editA">Apuntarlos a mano</button></div>`}
   </div>`;
   document.querySelectorAll('#v-semana [data-go2]').forEach(x=>x.onclick=()=>{location.hash=x.dataset.go2});
   const fa=$('#fotoA');if(fa)fa.onclick=()=>openFoto(cb.foto);
@@ -897,7 +903,7 @@ function renderInicio(){
     <button class="sq k8" data-go="premios">${ic.premios}<div><div class="t">Premios</div><div class="d">Próximamente</div></div></button>
 
   </div>`;
-  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.go});
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(b.dataset.go==='semana'){semWk=null;selDay=null}location.hash=b.dataset.go});
 }
 // ---------- nav ----------
 const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:()=>{$('#v-clasif').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán las marcas y récords. Próximamente.</p></div>'},hist:renderHist,hmes:renderHMes,cenas:renderCenas};
