@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795472696">
+<meta name="loto-version" content="1795473091">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -225,6 +225,7 @@ body{min-height:100vh}
 .bolBtns .bb1{background:linear-gradient(180deg,#8b7cf0,#6250d6 55%,#5140c2);color:#fff;border:1px solid #4a3ab3;box-shadow:0 5px 0 #392c94,0 8px 14px rgba(0,0,0,.2)}
 .bolBtns .bb2{background:linear-gradient(180deg,#fff,#efede7);color:#2c2560;border:2px solid #6250d6;box-shadow:0 5px 0 #b9b2e6}
 .bolBtns label:active{transform:translateY(4px);box-shadow:0 1px 0 #392c94}
+.ghbox{margin:14px 2px 0;font-size:14px;color:var(--text2)}.ghbox b{color:var(--text)}.ghrow{display:flex;gap:8px;margin-top:8px}.ghrow input{flex:1;min-width:0;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line)}
 #fotoOv{display:none;position:fixed;inset:0;z-index:100;background:#000}
 #fotoOv.on{display:block}
 #fotoOv .fz{position:absolute;inset:0;overflow:auto;display:flex;align-items:center;justify-content:center;touch-action:pinch-zoom pan-x pan-y}
@@ -590,13 +591,35 @@ function niceStep(mx,t=5){const raw=mx/t,p=Math.pow(10,Math.floor(Math.log10(raw
 // ---------- BOLETO ----------
 const BKEY='loto.boleto.v1';
 function getBol(){try{return JSON.parse(localStorage.getItem(BKEY)||'null')}catch(e){return null}}
-function setBol(b){try{localStorage.setItem(BKEY,JSON.stringify(b));if(b&&b.semana){const h=getHist();h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};localStorage.setItem(HKEY,JSON.stringify(h))}}catch(e){}if(typeof applyAuto==='function')applyAuto()}
+function setBol(b){try{localStorage.setItem(BKEY,JSON.stringify(b));if(b&&b.semana){let h={};try{h=JSON.parse(localStorage.getItem(HKEY)||'{}')}catch(e){}h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};localStorage.setItem(HKEY,JSON.stringify(h))}}catch(e){}if(b&&b.semana&&b.apuestas&&b.apuestas.length&&ghTok())ghPush({[b.semana]:{apuestas:b.apuestas,reintegro:b.reintegro??null}}).then(()=>{if(view==='semana')renderSemana()});if(typeof applyAuto==='function')applyAuto()}
 const HKEY='loto.boletos.v1';
 // números de semanas pasadas que ya no estén en el móvil (copia de seguridad dentro de la app)
 const BAKED_BOL={'2026-11-16':{apuestas:[[4,15,20,21,43,48],[8,18,30,37,41,48],[7,9,12,19,26,45]],reintegro:4}};
 const PKEY='loto.pts.v1';
+const REMOTE_BOL={};
+// ---- copia de los números en GitHub (boletos.json) ----
+const GH_REPO='MONDOSJD/LOTO',TKEY='loto.ghtoken.v1';
+const ghTok=()=>{try{return localStorage.getItem(TKEY)||''}catch(e){return ''}};
+const b64e=s=>btoa(unescape(encodeURIComponent(s))),b64d=s=>decodeURIComponent(escape(atob(s.replace(/\n/g,''))));
+let ghState='';
+async function ghPush(weeks){const tk=ghTok();if(!tk)return false;
+  const api=`https://api.github.com/repos/${GH_REPO}/contents/boletos.json`,H={Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'};
+  for(let tries=0;tries<3;tries++){
+    let sha=null,cur={};const g=await fetch(api+'?ref=main&t='+Date.now(),{headers:H,cache:'no-store'});
+    if(g.status===401||g.status===403){ghState='La clave de GitHub no es válida.';return false}
+    if(g.ok){const j=await g.json();sha=j.sha;try{cur=JSON.parse(b64d(j.content))}catch(e){}}
+    let ch=false;for(const [k,v] of Object.entries(weeks)){if(JSON.stringify(cur[k])!==JSON.stringify(v)){cur[k]=v;ch=true}}
+    if(!ch){ghState='ok';return true}
+    const sorted=Object.fromEntries(Object.keys(cur).sort().map(k=>[k,cur[k]]));
+    const r=await fetch(api,{method:'PUT',headers:H,body:JSON.stringify({message:'Números de la semana '+Object.keys(weeks).join(', '),content:b64e(JSON.stringify(sorted,null,1)),branch:'main',...(sha?{sha}:{})})});
+    if(r.ok){ghState='ok';Object.assign(REMOTE_BOL,weeks);return true}
+    if(r.status!==409&&r.status!==422){ghState='No se pudo guardar en GitHub ('+r.status+').';return false}
+  }return false}
+function ghPushAll(){const h={};try{Object.assign(h,JSON.parse(localStorage.getItem(HKEY)||'{}'))}catch(e){}const b=getBol();if(b&&b.semana)h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};
+  const w={};for(const [k,v] of Object.entries(h))if(v&&v.apuestas&&v.apuestas.length)w[k]={apuestas:v.apuestas,reintegro:v.reintegro??null};
+  return Object.keys(w).length?ghPush(w):Promise.resolve(true)}
 function getPts(){try{return JSON.parse(localStorage.getItem(PKEY)||'{}')}catch(e){return {}}}
-function getHist(){let h={};try{h=JSON.parse(localStorage.getItem(HKEY)||'{}')}catch(e){}h=Object.assign({},BAKED_BOL,h);const b=getBol();if(b&&b.semana&&!h[b.semana])h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};return h}
+function getHist(){let h={};try{h=JSON.parse(localStorage.getItem(HKEY)||'{}')}catch(e){}h=Object.assign({},BAKED_BOL,REMOTE_BOL,h);const b=getBol();if(b&&b.semana&&!h[b.semana])h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};return h}
 // Suma automática de puntos: resultados oficiales posteriores al Excel + apuestas de esa semana (1 punto por acierto)
 function applyAuto(){
   meses.length=BASE_N;cur=meses[BASE_N-1];
@@ -624,6 +647,7 @@ function drawDates(k){return drawDays(k).map(o=>{const r=getRes()[o.k];return `<
 const RKEY='loto.res.v1';
 let OFF={};
 function getRes(){let m={};try{m=JSON.parse(localStorage.getItem(RKEY)||'{}')}catch(e){}return Object.assign(m,OFF)}
+(async()=>{try{const r=await fetch('https://raw.githubusercontent.com/MONDOSJD/LOTO/main/boletos.json?t='+Date.now(),{cache:'no-store'});if(r.ok){Object.assign(REMOTE_BOL,await r.json());if(typeof applyAuto==='function')applyAuto();if(typeof renderAll==='function')renderAll()}}catch(e){}if(ghTok())ghPushAll()})();
 (async()=>{try{const r=await fetch('https://raw.githubusercontent.com/MONDOSJD/LOTO/main/resultados.json?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();for(const k in j){if(j[k]&&Array.isArray(j[k].n))OFF[k]={...j[k],oficial:true}}if(typeof applyAuto==='function')applyAuto();if(typeof renderAll==='function')renderAll()}}catch(e){}})();
 function setRes(o){try{localStorage.setItem(RKEY,JSON.stringify(o))}catch(e){}}
 let selDay=null,resEdit=false;
@@ -667,6 +691,15 @@ function renderSemana(){
       ${past?'':`<div class="btnrow b2" style="margin-top:12px"><button class="btn ghost" data-go2="boleto">Realizar nueva foto</button>${cb.foto?`<button class="btn ghost" id="fotoA">Consultar foto actual</button>`:''}</div>`}`
     :past?`<p class="note" style="margin:0">No hay guardados los números de esa semana.</p>`:`<p class="note" style="margin:0 0 10px">Aún no hay números para esta semana.</p><div class="btnrow"><button class="btn" data-go2="boleto">Hacer foto del boleto</button><button class="btn ghost" id="editA">Apuntarlos a mano</button></div>`}
   </div>`;
+  {const box=document.createElement('div');box.className='ghbox';const tk=ghTok();
+   box.innerHTML=tk?`<span>☁️ Copia en GitHub: <b>${ghState&&ghState!=='ok'?ghState:'activada'}</b></span> <button class="linkbtn" id="ghOff">Quitar clave</button>`
+     :`<span>☁️ Copia en GitHub: <b>desactivada</b></span><div class="ghrow"><input id="ghIn" type="password" placeholder="Pega aquí la clave de GitHub" autocomplete="off"><button class="btn" id="ghSave">Activar</button></div>`;
+   $('#v-semana').appendChild(box);
+   const off=$('#ghOff');if(off)off.onclick=()=>{try{localStorage.removeItem(TKEY)}catch(e){}ghState='';renderSemana()};
+   const sv=$('#ghSave');if(sv)sv.onclick=async()=>{const v=$('#ghIn').value.trim();if(!v)return;sv.disabled=true;sv.textContent='Comprobando…';
+     try{const r=await fetch(`https://api.github.com/repos/${GH_REPO}`,{headers:{Authorization:'Bearer '+v}});const j=r.ok?await r.json():null;
+       if(!j||!j.permissions||!j.permissions.push){sv.disabled=false;sv.textContent='Clave no válida';return}
+       localStorage.setItem(TKEY,v);ghState='';await ghPushAll();renderSemana()}catch(e){sv.disabled=false;sv.textContent='Activar'}}}
   document.querySelectorAll('#v-semana [data-go2]').forEach(x=>x.onclick=()=>{location.hash=x.dataset.go2});
   const fa=$('#fotoA');if(fa)fa.onclick=()=>openFoto(cb.foto);
   const ed=$('#editA');if(ed)ed.onclick=()=>{editMode=true;draft=null;semMsg='';renderSemana()};
