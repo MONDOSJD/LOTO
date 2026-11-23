@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795421231">
+<meta name="loto-version" content="1795421597">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -383,7 +383,7 @@ function renderMes(){
     return `<div class="card semcard"><h2>${semName(cur.y,h).toUpperCase()}</h2>
     <div class="semrank">${so.map((i,k)=>`<div class="sr ${sh.length<N&&sh.includes(i)?'g':''}"><span class="pos">${k+1}º</span><span class="nm">${P[i]}</span><b>${st[i]}</b></div>`).join('')}</div>
     <div class="scroll"><table><thead><tr><th></th>${P.map((p,i)=>`<th>${D.corto[i]}</th>`).join('')}</tr></thead><tbody>
-    ${S.ms.map(m=>`<tr><td>${label(m)}${m.enCurso?' <span style="color:var(--muted);font-size:11px">en curso</span>':''}</td>${m.tot.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}
+    ${S.ms.map(m=>`<tr class="drow smrow" data-hm="${meses.indexOf(m)}"><td>${label(m)}${m.enCurso?' <span style="color:var(--muted);font-size:11px">en curso</span>':''} <span class="chev">›</span></td>${m.tot.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}
     ${(()=>{const last=S.ms.length?Math.max(...S.ms.map(m=>m.m)):(h===1?0:6);let r='';for(let mm=last+1;mm<=(h===1?6:12);mm++)r+=`<tr class="fut"><td>${MES[mm-1]}</td><td>–</td><td>–</td><td>–</td></tr>`;return r})()}
     </tbody></table></div></div>`})()}`:'')+(mesTab==='mes'?`
   <div class="card sorteos">
@@ -392,7 +392,8 @@ function renderMes(){
   </div>
   `:'');
   document.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{mesTab=b.dataset.mt;renderMes()});
-  document.querySelectorAll('#v-mes .drow').forEach(r=>r.onclick=()=>{const [y,m,d]=r.dataset.dd.split('-').map(Number);semWk=weekKey(new Date(y,m-1,d));selDay=r.dataset.dd;resEdit=false;editMode=false;semMsg='';location.hash='semana'});
+  document.querySelectorAll('#v-mes .smrow').forEach(r=>r.onclick=()=>{const m=meses[+r.dataset.hm];if(m===cur){mesTab='mes';renderMes();scrollTo(0,0);return}hmIdx=+r.dataset.hm;try{sessionStorage.setItem('lotoHM',hmIdx)}catch(e){}location.hash='hmes'});
+  document.querySelectorAll('#v-mes .drow:not(.smrow)').forEach(r=>r.onclick=()=>{const [y,m,d]=r.dataset.dd.split('-').map(Number);semWk=weekKey(new Date(y,m-1,d));selDay=r.dataset.dd;resEdit=false;editMode=false;semMsg='';location.hash='semana'});
   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{local.draws=(local.draws||[]).filter(x=>x.id!=b.dataset.del);saveLocal();renderAll()});
 }
 function nextDay(d){const last=d.length?d[d.length-1].d:0;for(let k=last+1;k<=31;k++){const g=new Date(cur.y,cur.m-1,k);if(g.getMonth()!==cur.m-1)break;if([1,4,6].includes(g.getDay()))return k}return last+1}
