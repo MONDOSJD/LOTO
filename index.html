@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795421597">
+<meta name="loto-version" content="1795472696">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -592,22 +592,28 @@ const BKEY='loto.boleto.v1';
 function getBol(){try{return JSON.parse(localStorage.getItem(BKEY)||'null')}catch(e){return null}}
 function setBol(b){try{localStorage.setItem(BKEY,JSON.stringify(b));if(b&&b.semana){const h=getHist();h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};localStorage.setItem(HKEY,JSON.stringify(h))}}catch(e){}if(typeof applyAuto==='function')applyAuto()}
 const HKEY='loto.boletos.v1';
-function getHist(){let h={};try{h=JSON.parse(localStorage.getItem(HKEY)||'{}')}catch(e){}const b=getBol();if(b&&b.semana&&!h[b.semana])h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};return h}
+// números de semanas pasadas que ya no estén en el móvil (copia de seguridad dentro de la app)
+const BAKED_BOL={'2026-11-16':{apuestas:[[4,15,20,21,43,48],[8,18,30,37,41,48],[7,9,12,19,26,45]],reintegro:4}};
+const PKEY='loto.pts.v1';
+function getPts(){try{return JSON.parse(localStorage.getItem(PKEY)||'{}')}catch(e){return {}}}
+function getHist(){let h={};try{h=JSON.parse(localStorage.getItem(HKEY)||'{}')}catch(e){}h=Object.assign({},BAKED_BOL,h);const b=getBol();if(b&&b.semana&&!h[b.semana])h[b.semana]={apuestas:b.apuestas,reintegro:b.reintegro};return h}
 // Suma automática de puntos: resultados oficiales posteriores al Excel + apuestas de esa semana (1 punto por acierto)
 function applyAuto(){
   meses.length=BASE_N;cur=meses[BASE_N-1];
   meses.forEach(m=>{m.draws=m.draws.filter(x=>!x.auto)});
-  const H=getHist();
+  const H=getHist(),PT=getPts();let ptCh=false;
   for(const k of Object.keys(OFF).sort()){
     if(k<=LASTX)continue;
     const [y,mo,d]=k.split('-').map(Number);const dt=new Date(y,mo-1,d);
-    const bets=(H[weekKey(dt)]||{}).apuestas;if(!bets||bets.length<3)continue;
-    const win=new Set(OFF[k].n);const p=[0,1,2].map(i=>bets[i].filter(n=>win.has(n)).length);
+    const bets=(H[weekKey(dt)]||{}).apuestas;let p;
+    if(bets&&bets.length>=3){const win=new Set(OFF[k].n);p=[0,1,2].map(i=>bets[i].filter(n=>win.has(n)).length);if(JSON.stringify(PT[k])!==JSON.stringify(p)){PT[k]=p;ptCh=true}}
+    else if(PT[k])p=PT[k];else continue;
     let m=meses.find(x=>x.y===y&&x.m===mo);
     if(!m){m={y,m:mo,tot:[0,0,0],draws:[],pago:null};meses.push(m)}
     if(m.draws.some(x=>x.d===d))continue;
     m.draws.push({d,wd:'DLMXJVS'[dt.getDay()],p,auto:true});m.draws.sort((a,b)=>a.d-b.d);
   }
+  if(ptCh)try{localStorage.setItem(PKEY,JSON.stringify(PT))}catch(e){}
   meses.forEach((m,i)=>{m.enCurso=i===meses.length-1;if(i>=BASE_N-1)m.tot=[0,1,2].map(j=>m.draws.reduce((s,x)=>s+(+x.p[j]||0),0))});
   cur=meses[meses.length-1];
 }
