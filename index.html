@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795560571">
+<meta name="loto-version" content="1795560764">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -318,7 +318,7 @@ select,input{font:inherit;color:var(--text);background:var(--surface);border:1px
 </style>
 </head>
 <body>
-<div id="splash" aria-hidden="true"><img id="splImg" src="splash.jpg?v=1" alt="" onload="this.classList.add('on')"><div class="splT"><div class="splL">LOTO</div><div class="splE">EGIPTO</div><div class="splS">La peña de la Primitiva</div></div></div>
+<div id="splash" aria-hidden="true"><img id="splImg" src="splash.jpg?v=2" alt="" onload="this.classList.add('on')"><div class="splT"><div class="splL">LOTO</div><div class="splE">EGIPTO</div><div class="splS">La peña de la Primitiva</div></div></div>
 <script>(function(){const sp=document.getElementById('splash');const im=document.getElementById('splImg');if(im.complete&&im.naturalWidth)im.classList.add('on');requestAnimationFrame(()=>sp.classList.add('ready'));const close=()=>{if(sp.classList.contains('out'))return;sp.classList.add('out');setTimeout(()=>sp.remove(),700)};sp.addEventListener('click',close);setTimeout(close,2800)})();</script>
 <header>
   <div class="brand"><button id="back" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1 id="ttl"></h1><div id="hx" style="margin-left:auto"></div></div>
