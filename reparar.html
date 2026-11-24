@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reparar Loto Egipto</title>
+<style>body{font:17px/1.45 system-ui,sans-serif;margin:0;padding:20px;background:#fff8e1;color:#222}h1{font-size:22px}pre{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px;white-space:pre-wrap;font-size:13px}a.b{display:block;text-align:center;background:#2fae5a;color:#fff;font-weight:800;padding:16px;border-radius:14px;text-decoration:none;font-size:19px;margin-top:16px}</style></head>
+<body><h1>Reparando Loto Egipto…</h1><pre id="o">Empezando…</pre><a class="b" id="go" href="./" style="display:none">Abrir Loto Egipto</a>
+<script>
+const o=document.getElementById('o');const log=t=>{o.textContent+='\n'+t};
+(async()=>{
+ try{
+  if('serviceWorker' in navigator){const rs=await navigator.serviceWorker.getRegistrations();log('Service workers: '+rs.length);for(const r of rs){await r.unregister()}log('Service workers borrados')}
+  if(window.caches){const ks=await caches.keys();for(const k of ks)await caches.delete(k);log('Cachés borradas: '+ks.length)}
+  try{sessionStorage.clear()}catch(e){}
+  try{localStorage.removeItem('loto.splash.v1')}catch(e){}
+  const t=await (await fetch('./?r='+Date.now(),{cache:'no-store'})).text();
+  log('Versión en el servidor: '+((t.match(/loto-version" content="(\d+)/)||[])[1]||'?'));
+  log('Tamaño: '+t.length);
+  log('Tus números guardados se mantienen.');
+  log('\nListo. Pulsa el botón verde.');
+ }catch(e){log('ERROR: '+e.message)}
+ const g=document.getElementById('go');g.href='./?r='+Date.now();g.style.display='block';
+})();
+</script></body></html>
