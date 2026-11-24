@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795544850">
+<meta name="loto-version" content="1795545053">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -1119,7 +1119,7 @@ show('inicio');if(location.hash&&location.hash!=='#inicio')history.replaceState(
 <script>
 if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});let _r=0;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!_r){_r=1;location.reload()}});}
 (function(){const V=document.querySelector('meta[name="loto-version"]').content;let busy=0;
-async function check(){if(busy)return;busy=1;try{const t=await fetch(location.pathname+'?ver='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'');const m=t.match(/name="loto-version" content="(\d+)"/);if(m&&m[1]!==V){document.body.style.transition='opacity .3s';document.body.style.opacity='0';setTimeout(()=>location.reload(),300);return}}catch(e){}busy=0}
+async function check(){if(busy)return;busy=1;try{const t=await fetch(location.pathname+'?ver='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'');const m=t.match(/name="loto-version" content="(\d+)"/);if(m&&+m[1]>+V){let n=0;try{const o=JSON.parse(sessionStorage.getItem('lotoRl')||'{}');n=(o.v===m[1]?o.n:0)+1;sessionStorage.setItem('lotoRl',JSON.stringify({v:m[1],n}))}catch(e){}if(n<=2){setTimeout(()=>location.reload(),150);return}}}catch(e){}busy=0}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
 addEventListener('focus',check);setInterval(check,60000);setTimeout(check,3000);})();
 </script>
