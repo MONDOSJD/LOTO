@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795544457">
+<meta name="loto-version" content="1795544850">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -207,7 +207,7 @@ body{min-height:100vh}
 #v-semana .balls{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:100%}#v-semana .apu.ap2{display:block}#v-semana .balls span.nb{width:100%;height:auto;aspect-ratio:1/1;max-width:64px;justify-self:center;font-size:clamp(16px,5.4vw,23px)}#v-semana .apu span.nb{width:52px;height:52px;font-size:20px}#v-semana .respanel .balls{margin:10px 0!important}#v-semana .balls input.nb{width:44px;height:44px;font-size:17px}
 #splash{position:fixed;inset:0;z-index:200;background:linear-gradient(180deg,#24467c 0%,#4f6c9e 25%,#c99a7a 45%,#f2bf80 58%,#dcaa70 70%,#8f5d33 100%);transition:opacity .6s}
 #splash.out{opacity:0;pointer-events:none}
-#splCv{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .35s}#splCv.on{opacity:1}
+#splCv{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .35s;background-size:cover;background-position:center}#splCv.on{opacity:1}
 .splT{position:absolute;left:0;right:0;top:calc(5vh + env(safe-area-inset-top));text-align:center;font-family:Georgia,'Times New Roman',serif;opacity:0;transform:translateY(-8px);transition:opacity .8s .25s,transform .8s .25s}
 #splash.ready .splT{opacity:1;transform:none}
 .splL,.splE{font-weight:900;background:linear-gradient(180deg,#fff6d0 0%,#f5d27a 40%,#c8902c 60%,#f7dc8c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 2px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(255,200,110,.35))}
@@ -309,7 +309,7 @@ select,input{font:inherit;color:var(--text);background:var(--surface);border:1px
 </style>
 </head>
 <body>
-<div id="splash" aria-hidden="true"><canvas id="splCv"></canvas><div class="splT"><div class="splL">LOTO</div><div class="splE">EGIPTO</div><div class="splS">La peña de la Primitiva</div></div></div>
+<div id="splash" aria-hidden="true"><div id="splCv"></div><div class="splT"><div class="splL">LOTO</div><div class="splE">EGIPTO</div><div class="splS">La peña de la Primitiva</div></div></div>
 <script>
 function drawPyramidScene(cv){
   const W=cv.width,H=cv.height,g=cv.getContext('2d');
@@ -392,11 +392,14 @@ function drawPyramidScene(cv){
   gr=g.createRadialGradient(W/2,H*0.45,H*0.25,W/2,H*0.5,H*0.85);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.5)');g.fillStyle=gr;g.fillRect(0,0,W,H);
 }
 
-(function(){const sp=document.getElementById('splash'),cv=document.getElementById('splCv');const d=Math.min(2,window.devicePixelRatio||1);
-  cv.width=Math.round(innerWidth*d);cv.height=Math.round(innerHeight*d);
-  requestAnimationFrame(()=>{try{drawPyramidScene(cv)}catch(e){}cv.classList.add('on');sp.classList.add('ready')});
-  const t0=Date.now();const close=()=>{if(sp.classList.contains('out'))return;sp.classList.add('out');setTimeout(()=>sp.remove(),700)};
-  sp.addEventListener('click',close);setTimeout(close,2800);})();
+(function(){const sp=document.getElementById('splash'),cv=document.getElementById('splCv');const KEY='loto.splash.v1';
+  let img=null;try{img=localStorage.getItem(KEY)}catch(e){}
+  if(img){cv.style.backgroundImage='url('+img+')';cv.classList.add('on')}
+  requestAnimationFrame(()=>sp.classList.add('ready'));
+  const close=()=>{if(sp.classList.contains('out'))return;sp.classList.add('out');setTimeout(()=>sp.remove(),700);
+    // la imagen se pinta una sola vez, en segundo plano, y queda guardada para las siguientes aperturas
+    if(!img)setTimeout(()=>{try{const c=document.createElement('canvas');const d=Math.min(1.5,window.devicePixelRatio||1);c.width=Math.round(innerWidth*d);c.height=Math.round(innerHeight*d);drawPyramidScene(c);localStorage.setItem(KEY,c.toDataURL('image/jpeg',.82))}catch(e){}},4000)};
+  sp.addEventListener('click',close);setTimeout(close,img?2800:1600);})();
 </script>
 <header>
   <div class="brand"><button id="back" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1 id="ttl"></h1><div id="hx" style="margin-left:auto"></div></div>
