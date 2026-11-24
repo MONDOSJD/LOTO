@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795473091">
+<meta name="loto-version" content="1795541021">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -204,6 +204,7 @@ body{min-height:100vh}
 .balls span.nb::before,.apu span.nb::before{content:'';position:absolute;inset:4px;border:1px solid rgba(20,20,20,.6);border-radius:50%}
 .balls span.nb::after,.apu span.nb::after{content:'';position:absolute;left:7px;top:4px;width:12px;height:7px;border-radius:50%;background:radial-gradient(#fff,rgba(255,255,255,0));transform:rotate(-30deg)}
 .apu span.nb.rein{background:radial-gradient(circle at 36% 30%,#fffbe0 0,#ffe680 30%,#f5c518 62%,#c99a00 88%,#9c7600 100%)}
+.nb.dud{border-color:#e0a100;background:#fff7d6}.dudtag{font-size:12px;font-weight:800;color:#8a5a00;background:#ffe9a8;border-radius:6px;padding:1px 6px;margin-left:4px;text-transform:none}.edfoto{max-height:46vh;object-fit:contain;width:100%;margin-bottom:6px}
 .nb.bad{border-color:var(--bad);color:var(--bad)}
 .apu{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--grid)}
 .apu:last-child{border-bottom:0}
@@ -652,7 +653,7 @@ function getRes(){let m={};try{m=JSON.parse(localStorage.getItem(RKEY)||'{}')}ca
 function setRes(o){try{localStorage.setItem(RKEY,JSON.stringify(o))}catch(e){}}
 let selDay=null,resEdit=false;
 function weekTxt(k){const [y,m,d]=k.split('-').map(Number);const a=new Date(y,m-1,d),b=new Date(y,m-1,d+6);return `${a.getDate()} ${MES[a.getMonth()].slice(0,3).toLowerCase()} – ${b.getDate()} ${MES[b.getMonth()].slice(0,3).toLowerCase()}`}
-let draft=null, ocrState='', editMode=false, semMsg='', showFoto=false;
+let draft=null, ocrState='', editMode=false, semMsg='', showFoto=false, pendFoto=null, dudRows=[];
 const ball=(n,cls='')=>`<span class="nb ${cls}" style="display:inline-flex;align-items:center;justify-content:center">${String(n).padStart(2,'0')}</span>`;
 const apName=k=>k<P.length?P[k]:`Apuesta ${k+1}`;
 function curBol(){const b=getBol();return b&&b.semana===weekKey()?b:null}
@@ -681,7 +682,8 @@ function renderSemana(){
     </div>
     ${semMsg?`<p class="note" style="margin:0 0 10px">${semMsg}</p>`:''}
     ${editMode?`
-      ${draft.map((a,k)=>`<div class="apn">${apName(k)}</div><div class="apu ap2"><div class="balls">${a.map((n,j)=>`<input class="nb ${n===''||(n>=1&&n<=49)?'':'bad'}" inputmode="numeric" maxlength="2" value="${n===''?'':String(n).padStart(2,'0')}" data-a="${k}" data-j="${j}">`).join('')}</div><button class="x" data-rm="${k}" aria-label="Quitar">×</button></div>`).join('')}
+      ${pendFoto||(cb&&cb.foto)?`<img class="prev edfoto" src="${pendFoto||cb.foto}" alt="Foto del boleto">`:''}
+      ${draft.map((a,k)=>`<div class="apn">${apName(k)}${dudRows.includes(k)?' <span class="dudtag">revisar</span>':''}</div><div class="apu ap2"><div class="balls">${a.map((n,j)=>`<input class="nb ${n===''||(n>=1&&n<=49)?'':'bad'} ${dudRows.includes(k)?'dud':''}" inputmode="numeric" maxlength="2" value="${n===''?'':String(n).padStart(2,'0')}" data-a="${k}" data-j="${j}">`).join('')}</div><button class="x" data-rm="${k}" aria-label="Quitar">×</button></div>`).join('')}
       <div class="apu"><span class="lbl">R</span><input class="nb rein" id="reIn" inputmode="numeric" maxlength="1" value="${draft.rein===''?'':draft.rein}"><span class="note" style="margin:0">Reintegro (0 a 9)</span></div>
       <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="addA">+ Añadir apuesta</button><button class="btn" id="saveA">Guardar</button><button class="btn ghost" id="cancelA">Cancelar</button></div>`
     :cb&&cb.apuestas.length?`
@@ -717,12 +719,12 @@ function renderSemana(){
   $('#reIn').oninput=e=>{const v=parseInt(e.target.value,10);draft.rein=isNaN(v)?'':v};
   document.querySelectorAll('[data-rm]').forEach(x=>x.onclick=()=>{draft.splice(+x.dataset.rm,1);if(!draft.length)draft.push(['','','','','','']);renderSemana()});
   $('#addA').onclick=()=>{draft.push(['','','','','','']);renderSemana()};
-  $('#cancelA').onclick=()=>{editMode=false;draft=null;renderSemana()};
+  $('#cancelA').onclick=()=>{editMode=false;draft=null;pendFoto=null;dudRows=[];semMsg='';renderSemana()};
   $('#saveA').onclick=()=>{
     const ap=draft.map(a=>a.filter(n=>n>=1&&n<=49)).filter(a=>a.length);
     if(!ap.length){semMsg='No hay números válidos (del 1 al 49) para guardar.';renderSemana();return}
-    const old=curBol()||{};setBol({semana:weekKey(),apuestas:ap,reintegro:draft.rein===''?null:draft.rein,foto:old.foto||null,guardado:Date.now()});
-    editMode=false;draft=null;semMsg='Guardado.';renderSemana();
+    const old=curBol()||{};setBol({semana:weekKey(),apuestas:ap,reintegro:draft.rein===''?null:draft.rein,foto:pendFoto||old.foto||null,guardado:Date.now()});
+    editMode=false;draft=null;pendFoto=null;dudRows=[];semMsg='Guardado.';renderSemana();
   };
 }
 function renderBoleto(){
@@ -758,16 +760,29 @@ async function readTicket(file){
   ocrState='Leyendo los números… (la primera vez tarda un poco más)';renderBoleto();
   let ap=[],rein=null,foto=null;
   try{foto=await thumb(file)}catch(e){}
-  let expected=null,dud=[];
+  let expected=null,dud=[],dudIdx=[],reinOk=true;
   try{
     await loadTess();
     const res=await LotoOCR.read(file,{onProgress:(p,msg)=>{const n=document.getElementById('ocrN');if(n)n.textContent=`${msg} ${p}%`}});
-    ap=res.bets.filter(Boolean);rein=res.reintegro;expected=res.expected;dud=(res.dudosas||[]).map(i=>apName(i));
+    if(res.k&&foto){try{const im=new Image();im.src=foto;await im.decode();const c=document.createElement('canvas');const q=res.k%2;c.width=q?im.height:im.width;c.height=q?im.width:im.height;const g=c.getContext('2d');g.translate(c.width/2,c.height/2);g.rotate(res.k*Math.PI/2);g.drawImage(im,-im.width/2,-im.height/2);foto=c.toDataURL('image/jpeg',.8)}catch(e){}}
+    ap=res.bets.filter(Boolean);rein=res.reintegro;reinOk=res.reinSure!==false;expected=res.expected;dudIdx=res.dudosas||[];dud=dudIdx.map(i=>apName(i));
   }catch(e){console.error(e)}
   ocrState='';
-  setBol({semana:weekKey(),apuestas:ap,reintegro:rein,foto,guardado:Date.now()});
-  semMsg=ap.length?(expected&&ap.length<expected?`He leído ${ap.length} de ${expected} apuestas${rein!=null?' y el reintegro':''}. Pulsa "Corregir números" para añadir la que falta, o haz otra foto más de cerca.`:`He leído ${ap.length} apuesta${ap.length>1?'s':''}${rein!=null?' y el reintegro':''}. Revisa que estén bien; si no, pulsa "Corregir números".`)+(dud.length?` Ojo: revisa bien la de ${dud.join(' y ')}, no estoy seguro.`:'')+(rein==null?' No he encontrado el reintegro.':''):'No he podido leer los números. Apúntalos a mano o prueba otra foto más de cerca.';
-  editMode=!ap.length;draft=null;
+  const n=Math.max(expected||3,ap.length);
+  const sure=ap.length===n&&!dud.length&&rein!=null&&reinOk;
+  if(sure){
+    setBol({semana:weekKey(),apuestas:ap,reintegro:rein,foto,guardado:Date.now()});
+    semMsg=`He leído las ${n} apuestas y el reintegro con seguridad. Compruébalos con la foto si quieres.`;
+    editMode=false;draft=null;pendFoto=null;dudRows=[];
+  }else{
+    // no guardo nada dudoso: se abren los números para revisarlos con la foto delante
+    pendFoto=foto;dudRows=dudIdx.slice();
+    draft=ap.map(a=>a.slice());while(draft.length<n){dudRows.push(draft.length);draft.push(['','','','','',''])}
+    draft.forEach(a=>{while(a.length<6)a.push('')});draft.rein=rein==null?'':rein;
+    const falt=[];if(dudRows.length)falt.push('las apuestas de '+dudRows.map(i=>apName(i)).join(' y '));if(rein==null||!reinOk)falt.push('el reintegro');
+    semMsg=`No he podido leer con seguridad ${falt.join(' ni ')}. Compáralo con la foto, corrige lo que haga falta y pulsa Guardar.`;
+    editMode=true;
+  }
   history.replaceState(null,'','#semana');show('semana');
 }
 
@@ -838,80 +853,122 @@ function nApu(text){const m=text.toUpperCase().match(/(\d)\s*APUEST/);return m?+
 function toGray(src,w){const h=Math.round(src.height*w/src.width);const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(src,0,0,w,h);const d=g.getImageData(0,0,w,h),p=d.data;let mn=255,mx=0;for(let i=0;i<p.length;i+=4){const y=(.299*p[i]+.587*p[i+1]+.114*p[i+2])|0;p[i]=y;if(y<mn)mn=y;if(y>mx)mx=y}const k=255/Math.max(1,mx-mn);for(let i=0;i<p.length;i+=4){const y=(p[i]-mn)*k;p[i]=p[i+1]=p[i+2]=y}g.putImageData(d,0,0);return c}
 function otsu(c){const g=c.getContext('2d');const d=g.getImageData(0,0,c.width,c.height),p=d.data;const h=new Array(256).fill(0);for(let i=0;i<p.length;i+=4)h[p[i]|0]++;const tot=p.length/4;let sum=0;for(let t=0;t<256;t++)sum+=t*h[t];let wb=0,sb=0,best=0,th=128;for(let t=0;t<256;t++){wb+=h[t];if(!wb)continue;const wf=tot-wb;if(!wf)break;sb+=t*h[t];const mb=sb/wb,mf=(sum-sb)/wf,v=wb*wf*(mb-mf)*(mb-mf);if(v>best){best=v;th=t}}const o=document.createElement('canvas');o.width=c.width;o.height=c.height;const og=o.getContext('2d');const od=og.createImageData(c.width,c.height);for(let i=0;i<p.length;i+=4){const v=p[i]>th?255:0;od.data[i]=od.data[i+1]=od.data[i+2]=v;od.data[i+3]=255}og.putImageData(od,0,0);return o}
 function crop(c,y0,y1){const o=document.createElement('canvas');o.width=c.width;o.height=Math.max(10,y1-y0);o.getContext('2d').drawImage(c,0,y0,c.width,o.height,0,0,c.width,o.height);return o}
-function rotCanvas(src,deg,maxW=2600){const sc=Math.min(1,maxW/src.width);const w=src.width*sc,h=src.height*sc;const r=deg*Math.PI/180;const W=Math.ceil(Math.abs(w*Math.cos(r))+Math.abs(h*Math.sin(r))),H=Math.ceil(Math.abs(w*Math.sin(r))+Math.abs(h*Math.cos(r)));const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,H);g.translate(W/2,H/2);g.rotate(r);g.drawImage(src,-w/2,-h/2,w,h);return c}
+function rotCanvas(src,deg,maxW=2600){const sc=Math.min(1,maxW/src.width);const w=src.width*sc,h=src.height*sc;const r=deg*Math.PI/180;const W=Math.ceil(Math.abs(w*Math.cos(r))+Math.abs(h*Math.sin(r))),H=Math.ceil(Math.abs(w*Math.sin(r))+Math.abs(h*Math.cos(r)));const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');const t1=document.createElement('canvas');t1.width=t1.height=1;const tg=t1.getContext('2d');tg.drawImage(src,0,0,1,1);const px=tg.getImageData(0,0,1,1).data;g.fillStyle=`rgb(${px[0]},${px[1]},${px[2]})`;g.fillRect(0,0,W,H);g.translate(W/2,H/2);g.rotate(r);g.drawImage(src,-w/2,-h/2,w,h);return c}
 function skew(src){const sm=otsu(toGray(src,700));const w=sm.width,h=sm.height;const d=sm.getContext('2d').getImageData(0,0,w,h).data;const pts=[];for(let y=0;y<h;y+=1)for(let x=0;x<w;x+=1)if(d[(y*w+x)*4]<128)pts.push([x-w/2,y-h/2]);let best=0,ba=0;for(let a=-8;a<=8;a+=.5){const r=a*Math.PI/180,cs=Math.cos(r),sn=Math.sin(r);const bins=new Float64Array(h*2);for(const [x,y] of pts){const yy=Math.round(-x*sn+y*cs+h);if(yy>=0&&yy<bins.length)bins[yy]++}let v=0;for(let i=1;i<bins.length;i++){const dd=bins[i]-bins[i-1];v+=dd*dd}if(v>best){best=v;ba=a}}return ba}
-async function core(bmp,worker,log){
+function rot90(src,k,maxW){// k=0..3 cuartos de vuelta (horario)
+  const sc=Math.min(1,maxW/Math.max(src.width,src.height));const w=Math.round(src.width*sc),h=Math.round(src.height*sc);
+  const c=document.createElement('canvas');c.width=k%2?h:w;c.height=k%2?w:h;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);
+  g.translate(c.width/2,c.height/2);g.rotate(k*Math.PI/2);g.drawImage(src,-w/2,-h/2,w,h);return c}
+function score(text){const T=text.toUpperCase();let s=0;if(/PRIMIT/.test(T))s+=3;if(/APUEST/.test(T))s+=3;if(/INTEGR/.test(T))s+=3;if(/JOKER/.test(T))s+=1;s+=2*parse(text).length;return s}
+function parseIdx(text){// filas con su número de apuesta (1., 2., 3.) cuando se lee
+  return parse(text)}
+async function orient(bmp,worker,log){
+  await worker.setParameters({tessedit_pageseg_mode:'6',tessedit_char_whitelist:''});
+  let best=null;
+  for(const k of [0,1,3,2]){
+    log(3+k*3,'Buscando la orientación del boleto…');
+    let c0=rot90(bmp,k,1400);const a=skew(c0);if(Math.abs(a)>=0.75)c0=rotCanvas(c0,-a);
+    const c=toGray(c0,1200);const r=await worker.recognize(c);const sc=score(r.data.text||'');
+    if(!best||sc>best.sc)best={k,sc,a};
+    
+  }
+  return best;
+}
+async function core(src,worker,log,p0=15,p1=95){
   ROWS=[];
-    log(5,'Buscando el boleto…');
-    const W=1600, base=toGray(bmp,W);
-    await worker.setParameters({tessedit_pageseg_mode:'3',tessedit_char_whitelist:''});
-    const r1=await worker.recognize(base);
-    const full=r1.data.text||'';
-    let ya=null,yr=null;
-    for(const w of (r1.data.words||[])){const t=(w.text||'').toUpperCase();if(t.includes('APUEST'))ya=w.bbox.y1;if(/INTEGR/.test(t))yr=w.bbox.y0}
-    let reintegro=rein(full), expected=nApu(full);
-    const cands=[]; // {key,nums,votes,pos:[]}
-    const lens=[];
-    const add=list=>{const seen=new Set();for(const b of list){const key=b.nums.join(',');if(seen.has(key))continue;seen.add(key);const pos=b.y;let c=cands.find(x=>x.key===key);if(!c){c={key,nums:b.nums,votes:0,pos:[]};cands.push(c)}c.votes++;c.pos.push(pos)}if(seen.size)lens.push(seen.size)};
-    const same=(a,b)=>a.filter(x=>b.includes(x)).length>=4;
-    const pick=()=>{const n=expected||(lens.length?lens.slice().sort((x,y)=>lens.filter(v=>v===y).length-lens.filter(v=>v===x).length)[0]:0);const sorted=cands.slice().sort((x,y)=>y.votes-x.votes);const chosen=[];for(const c of sorted){if(chosen.length>=n)break;if(chosen.some(o=>same(o.nums,c.nums)))continue;chosen.push(c)}chosen.sort((x,y)=>x.pos.reduce((s,v)=>s+v,0)/x.pos.length-y.pos.reduce((s,v)=>s+v,0)/y.pos.length);return {n,chosen}};
-    if(ya==null){
-      // No se encontró la cabecera: buscar por franjas
-      log(8,'Buscando los números…');
-      await worker.setParameters({tessedit_pageseg_mode:'6',tessedit_char_whitelist:'0123456789.:REINTGO '});
-      const H=base.height,bh=Math.round(H*.24),st=Math.round(H*.12);let bestN=0,bestY=null;
-      for(let y=0;y<H-st;y+=st){const cc=crop(base,y,Math.min(H,y+bh));const r=await worker.recognize(cc);const rows=parse(r.data.text||'');if(rows.length>bestN){bestN=rows.length;bestY=y}if(expected==null)expected=nApu(r.data.text||'')}
-      if(bestY!=null){ya=Math.max(0,bestY-Math.round(H*.03));yr=Math.min(H,bestY+bh+Math.round(H*.03))}
+  log(p0,'Localizando las apuestas…');
+  const W=1600, base=toGray(src,W);
+  await worker.setParameters({tessedit_pageseg_mode:'3',tessedit_char_whitelist:''});
+  const r1=await worker.recognize(base);
+  const full=r1.data.text||'';
+  let ya=null,yr=null;
+  for(const w of (r1.data.words||[])){const t=(w.text||'').toUpperCase();if(t.includes('APUEST')&&ya==null)ya=w.bbox.y1;if(/INTEGR/.test(t))yr=w.bbox.y0}
+  if(ya!=null&&yr!=null&&yr<ya)yr=null;
+  const reinV={},expV={};const vote=(o,v)=>{if(v!=null)o[v]=(o[v]||0)+1};
+  vote(reinV,rein(full));vote(expV,nApu(full));
+  if(ya==null){
+    await worker.setParameters({tessedit_pageseg_mode:'6',tessedit_char_whitelist:'0123456789.:REINTGO '});
+    const H=base.height,bh=Math.round(H*.24),st=Math.round(H*.08);let bestN=0,bestY=null;
+    for(let y=0;y<H-st;y+=st){const cc=crop(base,y,Math.min(H,y+bh));const r=await worker.recognize(cc);const rows=parse(r.data.text||'');if(rows.length>bestN){bestN=rows.length;bestY=y}vote(expV,nApu(r.data.text||''))}
+    if(bestY!=null){ya=Math.max(0,bestY-Math.round(H*.03));yr=Math.min(H,bestY+bh+Math.round(H*.03))}
+  }
+  const top=ya!=null?Math.max(0,ya-6):0, bot=yr!=null?yr+Math.round(W*.05):(ya!=null?ya+Math.round(.45*W):base.height);
+  // lecturas: cada línea leída aporta {idx,nums,y}
+  const reads=[];const addR=(lines,y0,y1,sc,off)=>{for(const L of (lines||[])){for(const b of parse(L.text||'')){reads.push({...b,y:((L.bbox.y0+L.bbox.y1)/2/sc+off-top)/Math.max(1,bot-top)});ROWS.push({b:L.bbox.y1/sc+off,h:(L.bbox.y1-L.bbox.y0)/sc})}}};
+  addR(r1.data.lines,0,0,1,0);
+  const passes=[];
+  for(const wd of [1600,2000,2400])for(const f of ['ac','otsu','local'])for(const psm of ['6','4'])passes.push({wd,f,psm});
+  let k=0;
+  for(const ps of passes){
+    k++;log(p0+Math.round((p1-p0)*k/passes.length),'Leyendo los números con calma… ('+k+'/'+passes.length+')');
+    const g=toGray(src,ps.wd);const sc=ps.wd/W;let cc=crop(g,Math.round(top*sc),Math.round(bot*sc));
+    if(ps.f==='otsu')cc=otsu(cc);else if(ps.f==='local')cc=local(cc,Math.round(30*sc),10);
+    await worker.setParameters({tessedit_pageseg_mode:ps.psm,tessedit_char_whitelist:'0123456789.:REINTGO '});
+    const r=await worker.recognize(cc);const t=r.data.text||'';
+    addR(r.data.lines,0,0,sc,top);vote(reinV,rein(t));vote(expV,nApu(t));
+  }
+  const best=o=>{let b=null,n=0;for(const [k,v] of Object.entries(o))if(v>n){n=v;b=+k}return b==null?null:{v:b,n}};
+  // agrupar lecturas en filas por posición vertical
+  const rs=reads.slice().sort((a,b)=>a.y-b.y);const groups=[];
+  const mh=ROWS.length?ROWS.map(r=>r.h).sort((a,b)=>a-b)[ROWS.length>>1]/Math.max(1,bot-top):0.05;const thr=Math.max(0.01,mh*0.6);
+  for(const r of rs){const g=groups.find(g=>(r.idx&&g.idx?r.idx===g.idx:true)&&Math.abs(g.y-r.y)<thr);if(g&&!g.idx&&r.idx)g.idx=r.idx;if(g){g.items.push(r);g.y=g.items.reduce((s,x)=>s+x.y,0)/g.items.length}else groups.push({y:r.y,idx:r.idx,items:[r]})}
+  // en cada fila, la combinación más votada; el número de apuesta (1.,2.,3.) manda en el orden
+  const rows=[];
+  for(const g of groups){
+    const cnt={};for(const it of g.items){const key=it.nums.join(',');cnt[key]=(cnt[key]||0)+1}
+    const [key,votes]=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+    const idxV={};for(const it of g.items)if(it.idx)vote(idxV,it.idx);const ix=best(idxV);
+    // acuerdo número a número entre todas las lecturas de la fila
+    const nums=key.split(',').map(Number);const agree=nums.map(n=>g.items.filter(it=>it.nums.includes(n)).length/g.items.length);
+    rows.push({nums,votes,total:g.items.length,idx:ix?ix.v:null,y:g.y,agree:Math.min(...agree)});
+  }
+  // descartar filas fantasma (muy pocas lecturas comparadas con las demás)
+  const maxV=Math.max(0,...rows.map(r=>r.total));
+  let good=rows.filter(r=>r.total>=Math.max(2,maxV*0.25));
+  // fusionar filas con la misma combinación
+  good=good.filter((r,i)=>!good.some((o,j)=>j<i&&o.nums.join()===r.nums.join()));
+  const e=best(expV);const expected=e?e.v:null;
+  if(expected&&good.length>expected)good=good.sort((a,b)=>b.total-a.total).slice(0,expected);
+  good.sort((a,b)=>a.y-b.y);
+  // el número de apuesta impreso (1., 2., 3.) tiene que cuadrar con el orden de arriba abajo
+  const idxOk=good.every((r,i)=>r.idx===i+1);
+  // segura: muchas lecturas iguales, casi todas las de la fila coinciden y cada número aparece en casi todas
+  const sure=r=>idxOk&&r.votes>=4&&r.votes/r.total>=0.75&&r.agree>=0.8;
+  let reintegro=best(reinV);
+  if(!reintegro&&ROWS.length){
+    log(p1,'Buscando el reintegro…');
+    const last=Math.max(...ROWS.map(r=>r.b)), rh=ROWS.reduce((s,r)=>s+r.h,0)/ROWS.length;
+    const strip=crop(base,Math.round(last+rh*.2),Math.min(base.height,Math.round(last+rh*3)));
+    for(const [img,psm] of [[strip,'6'],[local(strip),'6'],[strip,'11'],[local(strip),'7']]){
+      await worker.setParameters({tessedit_pageseg_mode:psm,tessedit_char_whitelist:''});
+      const r=await worker.recognize(img);vote(reinV,rein(r.data.text||''));
     }
-    const top=ya!=null?ya:0, bot=yr!=null?yr+8:(ya!=null?ya+Math.round(.4*W):base.height);
-    add(parseLines(r1.data.lines,top,bot));
-    const passes=[];
-    for(const wd of [1600,2000]){for(const f of ['ac','otsu'])for(const psm of ['6','4','11'])passes.push({wd,f,psm})}
-    const done=()=>{const {n,chosen}=pick();return n>0&&chosen.length===n&&chosen.every(c=>c.votes>=2)};
-    let k=0;
-    for(const ps of passes){
-      if(k>=2&&done())break;
-      k++;log(10+Math.round(80*k/passes.length),'Leyendo los números…');
-      const g=toGray(bmp,ps.wd);const sc=ps.wd/W;let cc=crop(g,Math.round(top*sc),Math.round(bot*sc));if(ps.f==='otsu')cc=otsu(cc);
-      await worker.setParameters({tessedit_pageseg_mode:ps.psm,tessedit_char_whitelist:'0123456789.:REINTGO '});
-      const r=await worker.recognize(cc);const t=r.data.text||'';
-      add(parseLines(r.data.lines,0,cc.height,sc,top));if(reintegro==null)reintegro=rein(t);
-    }
-    if(reintegro==null&&ROWS.length){
-      log(95,'Buscando el reintegro…');
-      const last=Math.max(...ROWS.map(r=>r.b)), rh=ROWS.reduce((s,r)=>s+r.h,0)/ROWS.length;
-      const strip=crop(base,Math.round(last+rh*.2),Math.min(base.height,Math.round(last+rh*3)));
-      for(const [img,psm] of [[strip,'6'],[local(strip),'6'],[strip,'11'],[local(strip),'7']]){
-        await worker.setParameters({tessedit_pageseg_mode:psm,tessedit_char_whitelist:''});
-        const r=await worker.recognize(img);reintegro=rein(r.data.text||'');if(reintegro!=null)break;
-      }
-    }
-    const ch=pick().chosen;const bets=ch.map(c=>c.nums);const dudosas=ch.map((c,i)=>c.votes<2?i:-1).filter(i=>i>=0);
-    return {bets,reintegro,expected,text:full,dudosas};
+    reintegro=best(reinV);
+  }
+  return {bets:good.map(r=>r.nums),dudosas:good.map((r,i)=>sure(r)?-1:i).filter(i=>i>=0),reintegro:reintegro?reintegro.v:null,reinSure:!!(reintegro&&reintegro.n>=2),expected,text:full,detail:good.map(r=>({idx:r.idx,votes:r.votes,total:r.total,agree:+r.agree.toFixed(2)}))};
 }
 async function read(file,opts={}){
   const log=opts.onProgress||(()=>{});
   const bmp0=await createImageBitmap(file,{imageOrientation:'from-image'});
   const worker=await Tesseract.createWorker('eng',1,opts.workerOpts||{});
   try{
-    let res=await core(bmp0,worker,log);
-    const complete=r=>r.bets.length>0&&(!r.expected||r.bets.length>=r.expected)&&r.reintegro!=null;
-    if(!complete(res)){
-      const ang=skew(bmp0);
-      const tries=Math.abs(ang)>=1?[-ang]:[-2,2];
-      for(const a of tries){
-        log(50,'Probando otra vez, enderezando la foto…');
-        const r2=await core(rotCanvas(bmp0,a),worker,log);
-        const exp=res.expected||r2.expected;
-        if(r2.bets.length>res.bets.length||(r2.bets.length===res.bets.length&&res.reintegro==null&&r2.reintegro!=null))res={...r2,reintegro:r2.reintegro??res.reintegro,expected:exp};
-        else res={...res,reintegro:res.reintegro??r2.reintegro,expected:exp};
-        if(complete(res))break;
+    const o=await orient(bmp0,worker,log);
+    let src=rot90(bmp0,o.k,2600);
+    if(Math.abs(o.a)>=0.75)src=rotCanvas(src,-o.a);
+    let res=await core(src,worker,log,15,90);res.k=o.k;
+    const ok=r=>r.bets.length>0&&(!r.expected||r.bets.length>=r.expected)&&!r.dudosas.length&&r.reintegro!=null;
+    if(!ok(res)){
+      for(const a of [-1.5,1.5]){
+        const r2=await core(rotCanvas(src,a),worker,log,90,98);
+        const sc=r=>r.bets.length*10-r.dudosas.length*5+(r.reintegro!=null?2:0);
+        if(sc(r2)>sc(res))res={...r2,k:o.k,reintegro:r2.reintegro??res.reintegro,expected:r2.expected||res.expected};
+        if(ok(res))break;
       }
     }
     return res;
   }finally{await worker.terminate()}
 }
-return {read,parse};
+return {read,parse,_rot:rotCanvas,_skew:skew,_r90:rot90,_gray:toGray};
 })();
 
 // ---------- inicio ----------
