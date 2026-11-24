@@ -6,8 +6,15 @@
 <meta name="theme-color" content="#f5c518">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
+<script>
+// si algo falla al arrancar, se muestra el error en pantalla en vez de quedarse en negro
+(function(){const errs=[];function show(){let b=document.getElementById('bootErr');if(!b){if(!document.body)return;b=document.createElement('div');b.id='bootErr';b.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:9999;background:#fff3f3;color:#900;border:2px solid #c00;border-radius:10px;padding:10px;font:13px/1.35 monospace;white-space:pre-wrap;max-height:45vh;overflow:auto';document.body.appendChild(b)}b.textContent='Error al abrir la app (manda captura):\n'+errs.join('\n')}
+window.addEventListener('error',e=>{errs.push((e.message||'error')+' @'+(e.lineno||'')+':'+(e.colno||''));show()});
+window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason&&e.reason.message||e.reason));show()});
+document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
+</script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795545053">
+<meta name="loto-version" content="1795545261">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
