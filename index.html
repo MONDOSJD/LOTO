@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Loto Egipto">
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795544141">
+<meta name="loto-version" content="1795544457">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -204,7 +204,16 @@ body{min-height:100vh}
 .balls span.nb::before,.apu span.nb::before{content:'';position:absolute;inset:4px;border:1px solid rgba(20,20,20,.6);border-radius:50%}
 .balls span.nb::after,.apu span.nb::after{content:'';position:absolute;left:7px;top:4px;width:12px;height:7px;border-radius:50%;background:radial-gradient(#fff,rgba(255,255,255,0));transform:rotate(-30deg)}
 .apu span.nb.rein{background:radial-gradient(circle at 36% 30%,#fffbe0 0,#ffe680 30%,#f5c518 62%,#c99a00 88%,#9c7600 100%)}
-#v-semana .balls{gap:5px;flex-wrap:nowrap}#v-semana .balls span.nb,#v-semana .apu span.nb{width:min(46px,calc((100vw - 112px)/6));height:min(46px,calc((100vw - 112px)/6));font-size:17px}#v-semana .balls input.nb{width:44px;height:44px;font-size:17px}
+#v-semana .balls{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:100%}#v-semana .apu.ap2{display:block}#v-semana .balls span.nb{width:100%;height:auto;aspect-ratio:1/1;max-width:64px;justify-self:center;font-size:clamp(16px,5.4vw,23px)}#v-semana .apu span.nb{width:52px;height:52px;font-size:20px}#v-semana .respanel .balls{margin:10px 0!important}#v-semana .balls input.nb{width:44px;height:44px;font-size:17px}
+#splash{position:fixed;inset:0;z-index:200;background:linear-gradient(180deg,#24467c 0%,#4f6c9e 25%,#c99a7a 45%,#f2bf80 58%,#dcaa70 70%,#8f5d33 100%);transition:opacity .6s}
+#splash.out{opacity:0;pointer-events:none}
+#splCv{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .35s}#splCv.on{opacity:1}
+.splT{position:absolute;left:0;right:0;top:calc(5vh + env(safe-area-inset-top));text-align:center;font-family:Georgia,'Times New Roman',serif;opacity:0;transform:translateY(-8px);transition:opacity .8s .25s,transform .8s .25s}
+#splash.ready .splT{opacity:1;transform:none}
+.splL,.splE{font-weight:900;background:linear-gradient(180deg,#fff6d0 0%,#f5d27a 40%,#c8902c 60%,#f7dc8c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 2px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(255,200,110,.35))}
+.splL{font-size:min(21vw,16vh);line-height:.95;letter-spacing:.06em}
+.splE{font-size:min(10.5vw,8vh);letter-spacing:.42em;margin-left:.42em;line-height:1.1}
+.splS{margin-top:.6vh;font-size:min(4vw,2.4vh);letter-spacing:.28em;color:#fdeccc;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.7)}
 .nb.dud{border-color:#e0a100;background:#fff7d6}.dudtag{font-size:12px;font-weight:800;color:#8a5a00;background:#ffe9a8;border-radius:6px;padding:1px 6px;margin-left:4px;text-transform:none}.edfoto{max-height:46vh;object-fit:contain;width:100%;margin-bottom:6px}
 .nb.bad{border-color:var(--bad);color:var(--bad)}
 .apu{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--grid)}
@@ -300,6 +309,95 @@ select,input{font:inherit;color:var(--text);background:var(--surface);border:1px
 </style>
 </head>
 <body>
+<div id="splash" aria-hidden="true"><canvas id="splCv"></canvas><div class="splT"><div class="splL">LOTO</div><div class="splE">EGIPTO</div><div class="splS">La peña de la Primitiva</div></div></div>
+<script>
+function drawPyramidScene(cv){
+  const W=cv.width,H=cv.height,g=cv.getContext('2d');
+  let sd=11;const R=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
+  const lerp=(a,b,t)=>a+(b-a)*t, P=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t)];
+  const hz=H*0.66;
+  g.fillStyle='#dcaa70';g.fillRect(0,0,W,H);
+  // cielo
+  let gr=g.createLinearGradient(0,0,0,hz);
+  gr.addColorStop(0,'#24467c');gr.addColorStop(.3,'#4f6c9e');gr.addColorStop(.58,'#c99a7a');gr.addColorStop(.8,'#f2bf80');gr.addColorStop(1,'#fbdca6');
+  g.fillStyle=gr;g.fillRect(0,0,W,hz+4);
+  const sx=W*0.83,sy=hz*0.56;
+  gr=g.createRadialGradient(sx,sy,0,sx,sy,W*0.7);gr.addColorStop(0,'rgba(255,250,230,1)');gr.addColorStop(.04,'rgba(255,240,195,.95)');gr.addColorStop(.16,'rgba(255,205,130,.5)');gr.addColorStop(.5,'rgba(255,180,110,.15)');gr.addColorStop(1,'rgba(255,170,90,0)');
+  g.fillStyle=gr;g.fillRect(0,0,W,hz+4);
+  g.fillStyle='#fffdf4';g.beginPath();g.arc(sx,sy,W*0.04,0,7);g.fill();
+  // bruma en el horizonte
+  gr=g.createLinearGradient(0,hz-H*0.08,0,hz);gr.addColorStop(0,'rgba(253,225,175,0)');gr.addColorStop(1,'rgba(253,225,175,.75)');g.fillStyle=gr;g.fillRect(0,hz-H*0.08,W,H*0.08);
+  function edgeJag(a,b,n,amp){const pts=[];for(let i=0;i<=n;i++){const t=i/n;const p=P(a,b,t);if(i>0&&i<n){p[0]+=(R()-.5)*amp;p[1]+=(R()-.5)*amp*0.5}pts.push(p)}return pts}
+  function pyr(cx,base,hw,h,opt){
+    const A=[cx-hw*0.12,base-h], L=[cx-hw,base+h*0.01], M=[cx+hw*0.32,base+h*0.05], Rr=[cx+hw,base-h*0.005];
+    const poly=pts=>{g.beginPath();g.moveTo(...pts[0]);for(const q of pts.slice(1))g.lineTo(...q);g.closePath()};
+    const jag=opt.detail?H*0.004:0;
+    const eAL=edgeJag(A,L,60,jag),eAM=edgeJag(A,M,60,jag*0.4),eAR=edgeJag(A,Rr,60,jag);
+    const sh=[...eAL,...[M],...eAM.slice().reverse()], lt=[...eAM,Rr,...eAR.slice().reverse()];
+    let gl=g.createLinearGradient(A[0],A[1],Rr[0],base);gl.addColorStop(0,opt.lt0);gl.addColorStop(.55,opt.lt1);gl.addColorStop(1,opt.lt2);
+    poly(lt);g.fillStyle=gl;g.fill();
+    let gs=g.createLinearGradient(L[0],base,A[0],A[1]);gs.addColorStop(0,opt.sh0);gs.addColorStop(1,opt.sh1);
+    poly(sh);g.fillStyle=gs;g.fill();
+    if(opt.detail){
+      const rows=Math.round(h/(H*0.0095));
+      const face=(P0,P1,clipPts,lightA,darkA,lineA)=>{
+        g.save();poly(clipPts);g.clip();
+        for(let i=0;i<rows;i++){
+          const t0=i/rows,t1=(i+1)/rows;
+          const a0=P(A,P0,t0),b0=P(A,P1,t0),a1=P(A,P0,t1),b1=P(A,P1,t1);
+          // bloques de la hilada
+          const nb=Math.max(2,Math.round(3+55*t1));let u=0;
+          while(u<1){const du=(0.6+R()*0.8)/nb;const u2=Math.min(1,u+du);
+            const q=[P(a0,b0,u),P(a0,b0,u2),P(a1,b1,u2),P(a1,b1,u)];
+            const v=R();g.fillStyle=v<.5?`rgba(255,240,205,${lightA*R()})`:`rgba(40,22,8,${darkA*R()})`;poly(q);g.fill();
+            g.strokeStyle=`rgba(35,20,8,${lineA*0.6})`;g.lineWidth=Math.max(.8,H*0.0007);g.beginPath();g.moveTo(...q[1]);g.lineTo(...q[2]);g.stroke();
+            u=u2}
+          // junta horizontal (sombra) y canto iluminado
+          g.strokeStyle=`rgba(30,16,6,${lineA})`;g.lineWidth=Math.max(1,H*0.0016);g.beginPath();g.moveTo(...a1);g.lineTo(...b1);g.stroke();
+          g.strokeStyle=`rgba(255,238,200,${lightA*1.2})`;g.lineWidth=Math.max(.8,H*0.0008);g.beginPath();g.moveTo(a1[0],a1[1]-H*0.0018);g.lineTo(b1[0],b1[1]-H*0.0018);g.stroke();
+        }
+        // desgaste: manchas
+        for(let i=0;i<140;i++){const t=R(),u=R();const p=P(P(A,P0,t),P(A,P1,t),u);const r=H*(0.002+R()*0.01)*t;g.fillStyle=`rgba(${R()<.5?'60,35,15':'255,230,190'},${.05+R()*.08})`;g.beginPath();g.ellipse(p[0],p[1],r*2.2,r,0,0,7);g.fill()}
+        g.restore();
+      };
+      face(M,Rr,lt,.20,.16,.35);
+      face(L,M,sh,.04,.25,.55);g.save();poly(sh);g.clip();g.fillStyle='rgba(40,22,10,.30)';g.fillRect(0,0,W,H);g.restore();
+      // revestimiento liso en la cúspide
+      const k=.15;g.save();poly([A,P(A,L,k),P(A,M,k),P(A,Rr,k)]);g.clip();
+      gl=g.createLinearGradient(A[0],A[1],A[0]+hw*.25,A[1]+h*.15);gl.addColorStop(0,'#fff0cf');gl.addColorStop(1,'#e0b07a');g.fillStyle=gl;g.fillRect(A[0]-hw,A[1],hw*2,h*.2);
+      g.fillStyle='rgba(80,50,25,.6)';poly([A,P(A,L,k),P(A,M,k)]);g.fill();g.restore();
+      // arista que da al sol
+      g.strokeStyle='rgba(255,245,215,.7)';g.lineWidth=H*0.0022;g.beginPath();g.moveTo(...eAM[0]);for(const q of eAM)g.lineTo(...q);g.stroke();
+    }
+    if(opt.haze){g.fillStyle=opt.haze;poly(lt);g.fill();poly(sh);g.fill()}
+  }
+  const far={lt0:'#f3cf98',lt1:'#e2ad70',lt2:'#cf9658',sh0:'#9c6d45',sh1:'#b9875a'};
+  pyr(W*0.90,hz+H*0.01,W*0.17,H*0.12,{...far,haze:'rgba(252,214,160,.55)'});
+  pyr(W*0.66,hz+H*0.012,W*0.10,H*0.07,{...far,haze:'rgba(252,214,160,.62)'});
+  // dunas lejanas
+  g.fillStyle='#dcaa70';g.beginPath();g.moveTo(0,hz+H*0.01);for(let x=0;x<=W;x+=W/50)g.lineTo(x,hz+H*0.01-Math.sin(x/W*7+1)*H*0.005);g.lineTo(W,hz+H*.12);g.lineTo(0,hz+H*.12);g.fill();
+  // pirámide principal
+  pyr(W*0.40,hz+H*0.07,W*0.60,H*0.52,{lt0:'#f9d9a2',lt1:'#e5aa66',lt2:'#c48448',sh0:'#5c3a1f',sh1:'#8a5d37',detail:true});
+  // arena
+  gr=g.createLinearGradient(0,hz+H*0.06,0,H);gr.addColorStop(0,'#dba567');gr.addColorStop(.35,'#c78c50');gr.addColorStop(1,'#8f5d33');
+  g.fillStyle=gr;g.beginPath();g.moveTo(0,hz+H*0.085);for(let x=0;x<=W;x+=W/30)g.lineTo(x,hz+H*0.085+Math.sin(x/W*3.5)*H*0.006);g.lineTo(W,H);g.lineTo(0,H);g.fill();
+  // sombra larga de la pirámide
+  g.fillStyle='rgba(60,32,14,.38)';g.beginPath();g.moveTo(W*0.40-W*0.60,hz+H*0.075);g.lineTo(W*0.40+W*0.6*0.32,hz+H*0.07+H*0.026);g.lineTo(-W*0.4,hz+H*0.15);g.closePath();g.fill();
+  // ondas y piedras
+  for(let i=0;i<90;i++){const y=hz+H*0.095+Math.pow(R(),.8)*(H-hz-H*0.095),x=R()*W,w=W*(.05+R()*.22)*(y/H);g.strokeStyle=`rgba(${R()<.55?'255,222,170':'85,50,22'},${.12+R()*.14})`;g.lineWidth=1+R()*2.5*(y/H);g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+w/2,y-H*0.005,x+w,y);g.stroke()}
+  for(let i=0;i<18;i++){const y=hz+H*0.14+R()*(H-hz-H*0.14),x=R()*W,r=(1+R()*3)*(y/H)*W*0.004;g.fillStyle='rgba(60,35,15,.35)';g.beginPath();g.ellipse(x+r*.3,y+r*.35,r*1.3,r*.45,0,0,7);g.fill();const c=120+R()*30;g.fillStyle=`rgb(${c+40},${c+8},${c-30})`;g.beginPath();g.ellipse(x,y,r,r*.6,0,0,7);g.fill()}
+  // grano
+  const id=g.getImageData(0,0,W,H),p=id.data;for(let i=0;i<p.length;i+=4){const n=(R()-.5)*16;p[i]+=n;p[i+1]+=n;p[i+2]+=n}g.putImageData(id,0,0);
+  // viñeta
+  gr=g.createRadialGradient(W/2,H*0.45,H*0.25,W/2,H*0.5,H*0.85);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,.5)');g.fillStyle=gr;g.fillRect(0,0,W,H);
+}
+
+(function(){const sp=document.getElementById('splash'),cv=document.getElementById('splCv');const d=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(innerWidth*d);cv.height=Math.round(innerHeight*d);
+  requestAnimationFrame(()=>{try{drawPyramidScene(cv)}catch(e){}cv.classList.add('on');sp.classList.add('ready')});
+  const t0=Date.now();const close=()=>{if(sp.classList.contains('out'))return;sp.classList.add('out');setTimeout(()=>sp.remove(),700)};
+  sp.addEventListener('click',close);setTimeout(close,2800);})();
+</script>
 <header>
   <div class="brand"><button id="back" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1 id="ttl"></h1><div id="hx" style="margin-left:auto"></div></div>
 </header>
