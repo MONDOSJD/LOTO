@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795634142">
+<meta name="loto-version" content="1795634342">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -129,7 +129,7 @@ body.sub .brand span{display:none}
 .ticker.t2 .tk b.free{background:#2fae5a}
 .ticker.t2 .tk b.max{background:#e04848}
 .ticker.t2 .pm{font-weight:800;text-transform:uppercase;font-size:13px;letter-spacing:.03em}
-.ticker.t2 .pc{font-weight:800}
+.ticker.t2 .pc{font-weight:800}.sq.k4{padding-top:12px!important;padding-bottom:12px!important}.sq.k4 svg{width:36px!important;height:36px!important}.sq.k4 .t{font-size:16px}.sq.k4 .ticker{height:24px;margin-top:4px}.sq.k4 .ticker .tk{height:24px;font-size:13.5px}
 @media (prefers-color-scheme:dark){.ticker.t2{background:#3a2218}.ticker.t2 .tk{color:#f6c7ae}}
 .ticker .pc{font-weight:800}
 .ticker.alt .tk.ta{animation:tka 22s linear infinite}
@@ -1067,7 +1067,7 @@ function renderInicio(){
     ${(()=>{const b=curBol(),ok=b&&b.apuestas.length;return `<button class="sq fotobar numbar ${ok?'ok':'ko'}" data-go="semana"><span>${ok?'✓ Números de la semana disponibles':'⚠ Números de la semana no disponibles'}</span></button>`})()}
     <button class="sq k5 fotobar fb2" data-go="boleto">${ic.boleto}<span>Hacer foto del boleto</span></button>
     <button class="sq k1" data-go="mes">${ic.mes}<div style="min-width:0"><div class="t">Clasificación</div><div class="ticker alt"><div class="tk ta"><span class="pc">${label(cur).toUpperCase()}/${String(cur.y).slice(2)}:</span>${tk}</div></div><div class="ticker t3 alt"><div class="tk tb">${tkS}</div></div></div></button>
-    <button class="sq k4" data-go="cenas">${ic.cenas}<div style="min-width:0"><div class="t">Cenas</div>${pend.length?`<div class="ticker t2"><div class="tk">${(()=>{const m=pend[0],sh=shares(m);const mx=Math.max(...sh);const ord=[0,1,2].sort((a,b)=>sh[a]-sh[b]);return `<span class="pc">Próxima cena a pagar:</span><span class="pm">${label(m)}/${String(m.y).slice(2)}</span>`+ord.map(i=>`<span>${P[i]} <b class="${sh[i]<1e-9?'free':(Math.abs(sh[i]-mx)<1e-9?'max':'mid')}">${sh[i]<1e-9?'0':frac(sh[i])}</b></span>`).join('')})()}</div></div>`:'<div class="d">Ninguna pendiente</div>'}</div></button>
+    <button class="sq k4" data-go="cenas">${ic.cenas}<div style="min-width:0"><div class="t">Cenas</div>${pend.length?pend.slice(0,2).map((m,k)=>{const sh=shares(m);const mx=Math.max(...sh);const ord=[0,1,2].sort((a,b)=>sh[a]-sh[b]);return `<div class="ticker t2${k?' t2b':''}"><div class="tk">${k===0?`<span class="pc">Próximas cenas a pagar:</span>`:''}<span class="pm">${label(m)}/${String(m.y).slice(2)}</span>`+ord.map(i=>`<span>${P[i]} <b class="${sh[i]<1e-9?'free':(Math.abs(sh[i]-mx)<1e-9?'max':'mid')}">${sh[i]<1e-9?'0':frac(sh[i])}</b></span>`).join('')+`</div></div>`}).join(''):'<div class="d">Ninguna pendiente</div>'}</div></button>
     <button class="sq k2" data-go="clasif">${ic.clasif}<div><div class="t">Récords</div></div></button>
     <button class="sq k3" data-go="hist">${ic.hist}<div><div class="t">Histórico</div><div class="d">Desde ${MES[meses[0].m-1].toLowerCase()} ${meses[0].y}, año a año</div></div></button>
     <button class="sq k7" data-go="saldos">${ic.saldos}<div><div class="t">Saldos</div><div class="d">Próximamente</div></div></button>
