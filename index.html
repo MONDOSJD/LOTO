@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795606252">
+<meta name="loto-version" content="1795606519">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -173,8 +173,8 @@ body{min-height:100vh}
 .dok{position:absolute;top:4px;right:6px;font-style:normal;font-size:12px;color:#0b7a3b;font-weight:800}
 .dchip.on .dok{color:#b8f5c9}
 .respanel{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--bg)}
-.rtitle{font-weight:700;font-size:15px}
-.ofi{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:99px;background:#14c24f;color:#fff;font-size:11px;font-weight:800;vertical-align:middle}
+.rtitle{font-weight:800;font-size:18px;line-height:1.5}
+.ofi{display:inline-block;margin-left:8px;padding:3px 14px;border-radius:99px;background:#14c24f;color:#fff;font-size:22px;font-weight:900;vertical-align:middle;box-shadow:0 2px 0 #0d8a37}
 .rmeta{font-size:14px;color:var(--text2)}
 .linkbtn{border:0;background:none;color:var(--accent);font:inherit;font-size:13px;padding:6px 0 0;cursor:pointer}
 .apu span.nb.win{box-shadow:0 3px 4px rgba(0,0,0,.28),0 0 0 2px #1d5fbf}
