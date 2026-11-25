@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795591997">
+<meta name="loto-version" content="1795592075">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -558,6 +558,57 @@ function renderHMes(){
   </div>`;
 }
 
+
+// ---------- RÉCORDS ----------
+function renderRec(){
+  const ms=closed().filter(m=>m.tot&&m.tot.every(v=>typeof v==='number'));
+  const ml=m=>`${label(m).slice(0,3).toLowerCase()} ${String(m.y).slice(2)}`;
+  const nuevo=m=>m.y>2022||(m.y===2022&&m.m>=9);
+  const who=(i,v,extra)=>`<span style="white-space:nowrap">${dot(i)} <b>${P[i]}</b></span><span style="text-align:right"><b>${v}</b>${extra?`<br><span class="meta">${extra}</span>`:''}</span>`;
+  // rachas de meses
+  function streak(test){return [0,1,2].map(i=>{let best={n:0},c=0,st=null;ms.forEach((m,k)=>{if(test(m,i)){if(!c)st=m;c++;if(c>best.n)best={n:c,a:st,b:m}}else c=0});const cur=(()=>{let n=0;for(let k=ms.length-1;k>=0&&test(ms[k],i);k--)n++;return n})();return Object.assign(best,{i,cur})})}
+  const isTop=(m,i)=>highs(m.tot).includes(i)&&highs(m.tot).length<3, isLow=(m,i)=>lows(m.tot).includes(i)&&lows(m.tot).length<3;
+  const sW=streak(isTop),sL=streak(isLow),sNoL=streak((m,i)=>!lows(m.tot).includes(i)),sNoW=streak((m,i)=>!highs(m.tot).includes(i));
+  const rng=x=>x.n?`${ml(x.a)} – ${ml(x.b)}${x.cur===x.n?' · sigue':''}`:'';
+  const stRows=arr=>arr.slice().sort((a,b)=>b.n-a.n).map(x=>`<li>${who(x.i,x.n+' mes'+(x.n===1?'':'es'),rng(x))}</li>`).join('');
+  // meses ganados / perdidos
+  const cnt=f=>[0,1,2].map(i=>ms.filter(m=>f(m,i)).length);
+  const won=cnt((m,i)=>highs(m.tot).length===1&&highs(m.tot)[0]===i), lost=cnt((m,i)=>lows(m.tot).length===1&&lows(m.tot)[0]===i);
+  const triple=ms.filter(m=>new Set(m.tot).size===1);
+  // puntuaciones
+  function extreme(sel,dir){let r=[];ms.filter(sel).forEach(m=>m.tot.forEach((v,i)=>r.push({v,i,m})));r.sort((a,b)=>dir*(b.v-a.v));return r.slice(0,3)}
+  const xr=arr=>arr.map(x=>`<li>${who(x.i,x.v+' pts',ml(x.m))}</li>`).join('');
+  const margin=ms.map(m=>{const o=m.tot.slice().sort((a,b)=>b-a);return {v:o[0]-o[1],i:m.tot.indexOf(o[0]),m}}).filter(x=>x.v>0).sort((a,b)=>b.v-a.v).slice(0,3);
+  // semestres (sistema actual)
+  const sems=[];ms.filter(nuevo).forEach(m=>{const k=m.y+'-'+(m.m<=6?1:2);let s=sems.find(x=>x.k===k);if(!s){s={k,y:m.y,h:m.m<=6?1:2,tot:[0,0,0],n:0};sems.push(s)}m.tot.forEach((v,i)=>s.tot[i]+=v);s.n++});
+  const fullS=sems.filter(s=>s.n>=5);let sr=[];fullS.forEach(s=>s.tot.forEach((v,i)=>sr.push({v,i,s})));sr.sort((a,b)=>b.v-a.v);
+  const semL=s=>`${s.h}º sem ${s.y}`;
+  // sorteos (2010–2021)
+  const dr=[];ms.forEach(m=>(m.draws||[]).forEach(d=>dr.push({p:d.p,m,d:d.d})));
+  const bestDraw=[];dr.forEach(x=>x.p.forEach((v,i)=>bestDraw.push({v,i,x})));bestDraw.sort((a,b)=>b.v-a.v);
+  const drS=t=>[0,1,2].map(i=>{let b={n:0},c=0,st;dr.forEach(x=>{if(t(x.p[i])){if(!c)st=x;c++;if(c>b.n)b={n:c,a:st,b:x}}else c=0});return Object.assign(b,{i})}).sort((a,b)=>b.n-a.n);
+  const dl=x=>`${x.d}/${x.m.m}/${String(x.m.y).slice(2)}`;
+  const drRows=arr=>arr.map(x=>`<li>${who(x.i,x.n+' sorteos',x.n?dl(x.a)+' – '+dl(x.b):'')}</li>`).join('');
+  const card=(t,sub,body)=>`<div class="card"><h2>${t}${sub?` <small>${sub}</small>`:''}</h2><ul class="list">${body}</ul></div>`;
+  const rk=(arr,suf)=>[0,1,2].sort((a,b)=>arr[b]-arr[a]).map(i=>`<li>${who(i,arr[i]+suf)}</li>`).join('');
+  $('#v-clasif').innerHTML=
+    card('🔥 Más meses seguidos ganando','primero en solitario o empatado',stRows(sW))+
+    card('🥶 Más meses seguidos perdiendo','último en solitario o empatado',stRows(sL))+
+    card('🛡️ Más meses seguidos sin ser último','sin pagar 2/3',stRows(sNoL))+
+    card('🏜️ Más meses seguidos sin ganar','',stRows(sNoW))+
+    card('🏆 Meses ganados','primero en solitario',rk(won,' meses'))+
+    card('💸 Meses perdidos','último en solitario',rk(lost,' meses'))+
+    card('⭐ Mejor mes','sistema actual, desde sep 2022',xr(extreme(nuevo,1)))+
+    card('⭐ Mejor mes','sistema antiguo, 2010–2022',xr(extreme(m=>!nuevo(m),1)))+
+    card('🕳️ Peor mes','sistema actual',xr(extreme(nuevo,-1)))+
+    card('📏 Mayor ventaja en un mes','sobre el segundo',margin.map(x=>`<li>${who(x.i,'+'+x.v+' pts',ml(x.m))}</li>`).join(''))+
+    (sr.length?card('🏅 Mejor semestre','sistema actual',sr.slice(0,3).map(x=>`<li>${who(x.i,x.v+' pts',semL(x.s))}</li>`).join('')):'')+
+    (bestDraw.length?card('🎯 Más puntos en un sorteo','2010–2021',bestDraw.slice(0,3).map(x=>`<li>${who(x.i,x.v+' pts',dl(x.x))}</li>`).join('')):'')+
+    (dr.length?card('📈 Más sorteos seguidos puntuando','2010–2021',drRows(drS(v=>v>0))):'')+
+    (dr.length?card('📉 Más sorteos seguidos sin puntuar','2010–2021',drRows(drS(v=>v===0))):'')+
+    card('🤝 Triples empates','los tres igual en el mes',`<li><span>${triple.length} veces</span><span class="meta" style="text-align:right">${triple.slice(-4).map(ml).join(' · ')}</span></li>`)+
+    `<p class="note" style="text-align:center">Calculado con todos los meses cerrados desde ${MES[ms[0].m-1].toLowerCase()} ${ms[0].y}.</p>`;
+}
 // ---------- CENAS ----------
 let cenTab='pend';
 function renderCenas(){
@@ -1026,7 +1077,7 @@ function renderInicio(){
   document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(b.dataset.go==='semana'){semWk=null;selDay=null}location.hash=b.dataset.go});
 }
 // ---------- nav ----------
-const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:()=>{$('#v-clasif').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán las marcas y récords. Próximamente.</p></div>'},hist:renderHist,hmes:renderHMes,cenas:renderCenas};
+const R={saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:renderRec,hist:renderHist,hmes:renderHMes,cenas:renderCenas};
 let view='inicio';
 const TT={saldos:'Saldos',premios:'Premios',semana:'Números de la semana',boleto:'Hacer foto o subir boleto',mes:'',clasif:'Récords',hist:'Histórico',cenas:'Cenas'};
 function show(v){if(v!==view)showFoto=false;view=v;$('#hx').innerHTML='';$('#ttl').textContent=v==='mes'?'Clasificación':v==='hmes'&&meses[hmIdx]?`${label(meses[hmIdx]).toUpperCase()} ${meses[hmIdx].y}`:(TT[v]||'');document.body.classList.toggle('sub',v!=='inicio');document.querySelectorAll('section').forEach(s=>s.classList.toggle("on",s.id==="v-"+v));R[v]();scrollTo(0,0)}
