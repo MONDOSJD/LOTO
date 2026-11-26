@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795695687">
+<meta name="loto-version" content="1795702869">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -222,7 +222,7 @@ body{min-height:100vh}
 .splL,.splE{font-weight:900;background:linear-gradient(180deg,#fff6d0 0%,#f5d27a 40%,#c8902c 60%,#f7dc8c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 2px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(255,200,110,.35))}
 .splL{font-size:min(21vw,16vh);line-height:.95;letter-spacing:.06em}
 .splE{font-size:min(10.5vw,8vh);letter-spacing:.42em;margin-left:.42em;line-height:1.1}
-.splS{position:absolute;left:0;right:0;bottom:calc(9vh + env(safe-area-inset-bottom));text-align:center;font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:min(6.4vw,3.8vh);letter-spacing:.22em;color:#fff1c8;text-transform:uppercase;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 14px rgba(0,0,0,.45);opacity:0;transition:opacity .8s .5s}#splash.ready .splS{opacity:1}
+.splS{position:absolute;left:0;right:0;bottom:calc(3.5vh + env(safe-area-inset-bottom));text-align:center;font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:min(6.4vw,3.8vh);letter-spacing:.22em;color:#fff1c8;text-transform:uppercase;text-shadow:0 2px 4px rgba(0,0,0,.8),0 0 14px rgba(0,0,0,.45);opacity:0;transition:opacity .8s .5s}#splash.ready .splS{opacity:1}
 .nb.dud{border-color:#e0a100;background:#fff7d6}.dudtag{font-size:12px;font-weight:800;color:#8a5a00;background:#ffe9a8;border-radius:6px;padding:1px 6px;margin-left:4px;text-transform:none}.edfoto{max-height:46vh;object-fit:contain;width:100%;margin-bottom:6px}
 .nb.bad{border-color:var(--bad);color:var(--bad)}
 .apu{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--grid)}
