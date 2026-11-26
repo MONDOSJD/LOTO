@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795695098">
+<meta name="loto-version" content="1795695283">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -752,7 +752,7 @@ function renderSemana(){
     ${past?`<p class="wklbl">Semana del ${weekTxt(wk)}</p>`:''}
     <div class="dchips">${drawDates(wk)}</div>
     <div class="respanel">
-      <div class="rtitle"><div class="rt1">${res&&res.oficial?'RESULTADO OFICIAL':'RESULTADO'}</div><div class="rt2">${selTxt}</div></div>
+      <div class="rtitle"><div class="rt1">${res&&res.oficial?'RESULTADO OFICIAL':res?'RESULTADO':'PENDIENTE DE RESULTADOS'}</div><div class="rt2">${selTxt}</div></div>
       ${resEdit?`<div class="balls" style="margin:8px 0">${[0,1,2,3,4,5].map(j=>`<input class="nb" inputmode="numeric" maxlength="2" data-r="${j}" value="${res&&res.n[j]!=null?String(res.n[j]).padStart(2,'0'):''}">`).join('')}</div>
         <div class="apu"><span class="lbl">C</span><input class="nb" id="rC" inputmode="numeric" maxlength="2" value="${res&&res.c!=null?res.c:''}"><span class="lbl" style="margin-left:10px">R</span><input class="nb rein" id="rR" inputmode="numeric" maxlength="1" value="${res&&res.r!=null?res.r:''}"></div>
         <div class="btnrow" style="margin-top:8px"><button class="btn" id="rSave">Guardar resultado</button><button class="btn ghost" id="rCancel">Cancelar</button></div>`
