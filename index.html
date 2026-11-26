@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795694111">
+<meta name="loto-version" content="1795694358">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -245,7 +245,7 @@ body{min-height:100vh}
 .bolBtns .bb1{background:linear-gradient(180deg,#8b7cf0,#6250d6 55%,#5140c2);color:#fff;border:1px solid #4a3ab3;box-shadow:0 5px 0 #392c94,0 8px 14px rgba(0,0,0,.2)}
 .bolBtns .bb2{background:linear-gradient(180deg,#fff,#efede7);color:#2c2560;border:2px solid #6250d6;box-shadow:0 5px 0 #b9b2e6}
 .bolBtns label:active{transform:translateY(4px);box-shadow:0 1px 0 #392c94}
-html.restr .ghbox{display:none}#restrT{position:fixed;left:14px;right:14px;top:calc(14px + env(safe-area-inset-top));z-index:9998;background:#d92d2d;color:#fff;border:2px solid #9e1717;border-radius:14px;padding:14px 16px;font-size:17px;line-height:1.35;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.35);opacity:0;transform:translateY(-20px);pointer-events:none;transition:opacity .2s,transform .2s}#restrT.on{opacity:1;transform:none}
+html.restr .ghbox{display:none}#restrT{position:fixed;inset:0;z-index:9998;background:rgba(25,4,4,.93);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}#restrT.on{opacity:1;pointer-events:auto}#restrT .rsI{font-size:min(55vw,40vh);line-height:1;filter:drop-shadow(0 6px 12px rgba(0,0,0,.4))}#restrT .rsT{font-size:min(11vw,7vh);font-weight:900;letter-spacing:.04em;line-height:1.1;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.5)}
 .ghbox{margin:14px 2px 0;font-size:14px;color:var(--text2)}.ghbox b{color:var(--text)}.ghrow{display:flex;gap:8px;margin-top:8px}.ghrow input{flex:1;min-width:0;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line)}
 #fotoOv{display:none;position:fixed;inset:0;z-index:100;background:#000}
 #fotoOv.on{display:block}
@@ -1093,7 +1093,7 @@ $('#back').onclick=()=>{if(history.length>1&&view!=='inicio'&&sessionStorage.get
 const USR=(()=>{try{const q=new URLSearchParams(location.search).get('u');if(q){localStorage.setItem('loto.user.v1',q.toLowerCase());history.replaceState(null,'',location.pathname+location.hash)}return localStorage.getItem('loto.user.v1')||'ricardo'}catch(e){return 'ricardo'}})();
 const RESTR=['raul'].includes(USR);
 if(RESTR)document.documentElement.classList.add('restr');
-function restrToast(){let t=document.getElementById('restrT');if(!t){t=document.createElement('div');t.id='restrT';document.body.appendChild(t)}t.innerHTML='⛔ <b>Acceso restringido</b><br>Solo el administrador puede hacer o subir fotos del boleto.';t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),3500)}
+function restrToast(){let t=document.getElementById('restrT');if(!t){t=document.createElement('div');t.id='restrT';document.body.appendChild(t)}t.innerHTML='<div class="rsI">⛔</div><div class="rsT">ACCESO<br>RESTRINGIDO</div>';t.onclick=()=>t.classList.remove('on');t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2500)}
 document.addEventListener('click',e=>{if(!RESTR||!e.target.closest)return;if(e.target.closest('[data-go="boleto"],[data-go2="boleto"],#editA,#rEdit,[data-del]')){e.preventDefault();e.stopPropagation();restrToast()}},true);
 addEventListener('hashchange',()=>{if(RESTR&&location.hash==='#boleto'){location.replace('#inicio');restrToast()}});
 addEventListener('hashchange',()=>{try{sessionStorage.setItem('lotoNav','1')}catch(e){}const h=location.hash.slice(1);show(R[h]?h:'inicio')});
