@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795721920">
+<meta name="loto-version" content="1795722309">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -71,7 +71,11 @@ body.sub .brand span{display:none}
 .rank .rn .bar{height:6px;margin-top:5px}
 .rank b{flex:none;font-size:18px;min-width:26px;text-align:right}
 .mesv tr.fut td{color:var(--muted);opacity:.6}
-.subtabs.two{grid-template-columns:repeat(2,1fr)}.subtabs.four{grid-template-columns:repeat(2,1fr)}.sq.caja{grid-column:1/-1;flex-direction:row!important;justify-content:center;gap:16px;height:112px!important;text-align:left}.sq.caja svg{width:46px;height:46px;flex:none;color:#0e8a6a}.sq.caja .t{font-size:22px}.sq.caja .d{font-size:13px}
+.subtabs.two{grid-template-columns:repeat(2,1fr)}.subtabs.four{grid-template-columns:repeat(2,1fr)}.sq.caja{grid-column:1/-1;display:flex;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:12px;height:auto!important;padding:14px 16px 18px!important;cursor:default}
+.cjT{display:flex;align-items:center;justify-content:center;gap:10px;font-size:26px;font-weight:900;letter-spacing:.08em;color:#1d1c1a}.cjT svg{width:34px;height:34px;color:#0e8a6a}
+.cjB{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:14px;background:linear-gradient(180deg,#5af08c 0%,#22c45a 55%,#16a548 100%);border:1px solid #14963f;box-shadow:0 4px 0 #0d7a32,inset 0 2px 0 rgba(255,255,255,.4);color:#04381a}.cjB span{font-size:20px;font-weight:900;letter-spacing:.06em}.cjB b{font-size:32px;font-weight:900}.cjB.big{padding:22px 24px}.cjB.big b{font-size:40px}
+.cjR{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cjBtn{font:inherit;font-size:18px;font-weight:800;padding:14px 8px;border-radius:14px;cursor:pointer;background:linear-gradient(180deg,#ffffff,#ecebe6);border:2px solid #b9b5aa;box-shadow:0 4px 0 #a9a597,0 6px 10px rgba(0,0,0,.15);color:#2b2a27;-webkit-tap-highlight-color:transparent;transition:transform .06s,box-shadow .06s}.cjBtn:active{transform:translateY(3px);box-shadow:0 1px 0 #a9a597}.cjBtn.cjM{background:linear-gradient(180deg,#4f9df0,#1d5fbf);border-color:#1a56ad;box-shadow:0 4px 0 #123f80,0 6px 10px rgba(0,0,0,.15);color:#fff}
 .subtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .stab{font:inherit;font-weight:700;font-size:15px;color:var(--text);padding:10px 4px 9px;border-radius:12px;border:1px solid #dcd9d0;background:linear-gradient(180deg,#fff,#efede7);box-shadow:0 4px 0 #cfccc2;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .06s,box-shadow .06s;-webkit-tap-highlight-color:transparent}
 .stab span{font-size:12px;font-weight:600;color:var(--text2)}
@@ -345,6 +349,7 @@ window.LOTO_DATA={"jugadores":["Guillermo","Ricardo","Raúl"],"corto":["GUI","RI
 <script>
 (function(){
 const D=window.LOTO_DATA, P=D.jugadores, N=P.length;
+const CAJA_BOTE=50;
 const USR=(()=>{try{const q=new URLSearchParams(location.search).get('u');if(q){localStorage.setItem('loto.user.v1',q.toLowerCase());history.replaceState(null,'',location.pathname+location.hash)}return localStorage.getItem('loto.user.v1')||'ricardo'}catch(e){return 'ricardo'}})();
 const RESTR=['raul'].includes(USR);
 const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1079,10 +1084,10 @@ function renderInicio(){
     <button class="sq k4" data-go="cenas">${ic.cenas}<div style="min-width:0"><div class="t">Cenas</div>${pend.length?`<div class="ticker t2 tdbl"><div class="tk"><span class="pc">Próximas cenas a pagar:</span><span class="rows">${pend.slice(0,2).map(m=>{const sh=shares(m);const mx=Math.max(...sh);const ord=[0,1,2].sort((a,b)=>sh[a]-sh[b]);return `<span class="r"><span class="pm">${label(m)}/${String(m.y).slice(2)}</span>`+ord.map(i=>`<span>${P[i]} <b class="${sh[i]<1e-9?'free':(Math.abs(sh[i]-mx)<1e-9?'max':'mid')}">${sh[i]<1e-9?'0':frac(sh[i])}</b></span>`).join('')+`</span>`}).join('')}</span></div></div>`:'<div class="d">Ninguna pendiente</div>'}</div></button>
     <button class="sq k3" data-go="hist">${ic.hist}<div><div class="t">Histórico</div><div class="d">Desde ${MES[meses[0].m-1].toLowerCase()} ${meses[0].y}, año a año</div></div></button>
     <button class="sq k2" data-go="clasif">${ic.clasif}<div><div class="t">Récords</div></div></button>
-    <button class="sq k7 caja" data-go="caja">${ic.saldos}<div><div class="t">Caja</div><div class="d">Bote · Saldo Raúl · Saldo Ricardo · Movimientos</div></div></button>
+    <div class="sq k7 caja"><div class="cjT">${ic.saldos}<span>CAJA</span></div><div class="cjB"><span>BOTE</span><b>${CAJA_BOTE} €</b></div><div class="cjR"><button class="cjBtn" data-go="caja" data-cjs="raul">Raúl</button><button class="cjBtn" data-go="caja" data-cjs="ric">Ricardo</button></div><button class="cjBtn cjM" data-go="caja" data-cjs="mov">Movimientos</button></div>
 
   </div>`;
-  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(b.dataset.go==='semana'){semWk=null;selDay=null}location.hash=b.dataset.go});
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(b.dataset.go==='semana'){semWk=null;selDay=null}if(b.dataset.cjs)cajaTab=b.dataset.cjs;location.hash=b.dataset.go});
 }
 // ---------- nav ----------
 let cajaTab='bote';
@@ -1090,7 +1095,7 @@ function renderCaja(){
   const tabs=[['bote','Bote'],['raul','Saldo Raúl'],['ric','Saldo Ricardo'],['mov','Movimientos']];
   const txt={bote:'Aquí irá el bote de la peña.',raul:'Aquí irá el saldo de Raúl.',ric:'Aquí irá el saldo de Ricardo.',mov:'Aquí irán los movimientos de la caja.'};
   $('#v-caja').innerHTML=`<div class="subtabs four">${tabs.map(([k,t])=>`<button class="stab ${k===cajaTab?'on':''}" data-cj="${k}">${t}</button>`).join('')}</div>
-  <div class="card"><p class="note" style="margin:0;font-size:15px">${txt[cajaTab]} Próximamente.</p></div>`;
+  <div class="card">${cajaTab==='bote'?`<div class="cjB big"><span>BOTE</span><b>${CAJA_BOTE} €</b></div>`:`<p class="note" style="margin:0;font-size:15px">${txt[cajaTab]} Próximamente.</p>`}</div>`;
   document.querySelectorAll('[data-cj]').forEach(b=>b.onclick=()=>{cajaTab=b.dataset.cj;renderCaja()});
 }
 const R={caja:renderCaja,saldos:()=>{$('#v-saldos').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los saldos. Próximamente.</p></div>'},premios:()=>{$('#v-premios').innerHTML='<div class="card"><p class="note" style="margin:0;font-size:15px">Aquí irán los premios. Próximamente.</p></div>'},semana:renderSemana,boleto:renderBoleto,inicio:renderInicio,mes:renderMes,clasif:renderRec,hist:renderHist,hmes:renderHMes,cenas:renderCenas};
