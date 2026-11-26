@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795702869">
+<meta name="loto-version" content="1795708969">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -148,7 +148,7 @@ body.sub .brand span{display:none}
 .sq.k1 svg{width:36px!important;height:36px!important}
 .sq.k1 .ticker{height:24px;margin-top:4px}.sq.k1 .ticker .tk{height:24px;font-size:13.5px}
 .grid{gap:12px 12px}
-body:not(.sub),body:not(.sub) main{background:transparent}body:not(.sub)::before{content:'';position:fixed;inset:0;z-index:-1;background:#0b0b0b url(splash.jpg?v=2) center top/cover no-repeat}
+body:not(.sub),body:not(.sub) main{background:#0b0b0b}
 html{background:#0b0b0b}
 body{min-height:100vh}
 .sq.k6.wide.col{padding:18px 14px 44px;min-height:0}
@@ -245,7 +245,7 @@ body{min-height:100vh}
 .bolBtns .bb1{background:linear-gradient(180deg,#8b7cf0,#6250d6 55%,#5140c2);color:#fff;border:1px solid #4a3ab3;box-shadow:0 5px 0 #392c94,0 8px 14px rgba(0,0,0,.2)}
 .bolBtns .bb2{background:linear-gradient(180deg,#fff,#efede7);color:#2c2560;border:2px solid #6250d6;box-shadow:0 5px 0 #b9b2e6}
 .bolBtns label:active{transform:translateY(4px);box-shadow:0 1px 0 #392c94}
-html.restr .ghbox{display:none}.nb.pendb{opacity:.6;color:#8a8984!important}#restrT{position:fixed;left:14px;right:14px;top:calc(14px + env(safe-area-inset-top));z-index:9998;background:#d92d2d;color:#fff;border:2px solid #9e1717;border-radius:14px;padding:14px 16px;font-size:20px;font-weight:900;letter-spacing:.03em;line-height:1.35;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.35);opacity:0;transform:translateY(-20px);pointer-events:none;transition:opacity .2s,transform .2s}#restrT.on{opacity:1;transform:none}
+html.restr .ghbox{display:none}.reinlbl{font-size:19px;font-weight:800;color:var(--text);margin-right:4px}.nb.pendb{opacity:.6;color:#8a8984!important}#restrT{position:fixed;left:14px;right:14px;top:calc(14px + env(safe-area-inset-top));z-index:9998;background:#d92d2d;color:#fff;border:2px solid #9e1717;border-radius:14px;padding:14px 16px;font-size:20px;font-weight:900;letter-spacing:.03em;line-height:1.35;text-align:center;box-shadow:0 10px 24px rgba(0,0,0,.35);opacity:0;transform:translateY(-20px);pointer-events:none;transition:opacity .2s,transform .2s}#restrT.on{opacity:1;transform:none}
 .ghbox{margin:14px 2px 0;font-size:14px;color:var(--text2)}.ghbox b{color:var(--text)}.ghrow{display:flex;gap:8px;margin-top:8px}.ghrow input{flex:1;min-width:0;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line)}
 #fotoOv{display:none;position:fixed;inset:0;z-index:100;background:#000}
 #fotoOv.on{display:block}
@@ -771,7 +771,7 @@ function renderSemana(){
       <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="addA">+ Añadir apuesta</button><button class="btn" id="saveA">Guardar</button><button class="btn ghost" id="cancelA">Cancelar</button></div>`
     :cb&&cb.apuestas.length?`
       ${cb.apuestas.map((a,k)=>{const h=hitSet?a.filter(n=>hitSet.has(n)).length:0,hc=hitSet&&compl!=null&&a.includes(compl);return `<div class="apn">${apName(k)}</div><div class="apu ap2"><div class="balls">${a.map(n=>ball(n,hitSet&&hitSet.has(n)?'hit':(hc&&n===compl?'hitc':''))).join('')}</div></div>`}).join('')}
-      <div class="apu">${cb.reintegro!=null&&cb.reintegro!==''?ball(cb.reintegro,'rein'+(res&&res.r!=null&&res.r===cb.reintegro?' hit':'')).replace(/>0(\d)</,'>$1<'):'<span class="note" style="margin:0">Sin reintegro</span>'}<span class="note" style="margin:0">${res&&res.r!=null&&cb.reintegro!=null?(res.r===cb.reintegro?'¡Reintegro acertado!':'Reintegro'):'Reintegro'}</span></div>
+      <div class="apu"><span class="reinlbl">${res&&res.r!=null&&cb.reintegro!=null&&res.r===cb.reintegro?'¡Reintegro acertado!':'Reintegro'}</span>${cb.reintegro!=null&&cb.reintegro!==''?ball(cb.reintegro,'rein'+(res&&res.r!=null&&res.r===cb.reintegro?' hit':'')).replace(/>0(\d)</,'>$1<'):'<span class="note" style="margin:0">Sin reintegro</span>'}</div>
       ${hitSet?'<p class="hitnote">En verde los números acertados en este sorteo.</p>':''}
       ${past?'':`<div class="btnrow b2" style="margin-top:12px"><button class="btn ghost" data-go2="boleto">Realizar nueva foto</button>${cb.foto?`<button class="btn ghost" id="fotoA">Consultar foto actual</button>`:''}</div>`}`
     :past?`<p class="note" style="margin:0">No hay guardados los números de esa semana.</p>`:`<p class="note" style="margin:0 0 10px">Aún no hay números para esta semana.</p><div class="btnrow"><button class="btn" data-go2="boleto">Hacer foto del boleto</button><button class="btn ghost" id="editA">Apuntarlos a mano</button></div>`}
