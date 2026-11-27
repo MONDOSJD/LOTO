@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795770907">
+<meta name="loto-version" content="1795771003">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -137,7 +137,7 @@ body.sub .brand span{display:none}
 .ticker.t2 .tk b.free{background:#2fae5a}
 .ticker.t2 .tk b.max{background:#e04848}
 .ticker.t2 .pm{font-weight:800;text-transform:uppercase;font-size:13px;letter-spacing:.03em}
-.ticker.t2 .pc{font-weight:800}.sq.k4{padding-top:12px!important;padding-bottom:12px!important}.sq.k4 svg{width:36px!important;height:36px!important}.sq.k4 .t{font-size:16px}.sq.k4 .ticker{height:24px;margin-top:4px}.sq.k4 .ticker .tk{height:24px;font-size:13.5px}.sq.k4 .ticker.tdbl,.sq.k4 .ticker.tdbl .tk{height:54px}.tdbl .tk .rows{display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;margin:0}.tdbl .tk .rows .r{display:flex;align-items:center;margin:0}.tdbl .tk b{height:22px;min-width:22px;font-size:13px}
+.ticker.t2 .pc{font-weight:800}.sq.k4{padding-top:12px!important;padding-bottom:12px!important}.sq.k4 svg{width:36px!important;height:36px!important}.sq.k4 .t{font-size:16px}.sq.k4 .ticker{height:24px;margin-top:4px}.sq.k4 .ticker .tk{height:24px;font-size:13.5px}.sq.k4 .ticker.tdbl,.sq.k4 .ticker.tdbl .tk{height:54px}.tdbl .tk .rows{display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;margin:0}.tdbl .tk .rows .r{display:grid;grid-template-columns:7.6em repeat(3,7.4em);align-items:center;margin:0}.tdbl .tk .rows .r>span{margin:0;justify-content:flex-end;gap:4px}.tdbl .tk .rows .r>span.pm{justify-content:flex-start;margin-left:6px}.tdbl .tk .rows .r b{min-width:30px;width:30px;padding:0}.tdbl .tk b{height:22px;min-width:22px;font-size:13px}
 @media (prefers-color-scheme:dark){.ticker.t2{background:#3a2218}.ticker.t2 .tk{color:#f6c7ae}}
 .ticker .pc{font-weight:800}
 .ticker.alt .tk.ta{animation:tka 22s linear infinite}
