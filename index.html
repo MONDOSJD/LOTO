@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection',e=>{errs.push('promesa: '+(e.reason
 document.addEventListener('DOMContentLoaded',()=>{if(errs.length)show();setTimeout(()=>{const sp=document.getElementById('splash');if(sp)sp.remove();if(!document.querySelector('#v-inicio .sq')&&!document.body.classList.contains('sub')){errs.push('La pantalla de inicio no se ha dibujado. Versión '+(document.querySelector('meta[name=loto-version]')||{}).content);show()}},6000)});})();
 </script>
 <title>Loto Egipto</title>
-<meta name="loto-version" content="1795770416">
+<meta name="loto-version" content="1795770625">
 <link rel="manifest" href="manifest.json?v=13">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13">
 <link rel="icon" href="icon-192.png?v=13">
@@ -256,7 +256,7 @@ body{min-height:100vh}
 body>header,body>main{zoom:.9}.cuB .cjBtn.cuN{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;font-size:16px}.cuN b{font-weight:900;color:#0b6b3a}.sq.cuot .cuB{gap:6px}
 .grid>.sq.u{justify-content:flex-start!important;align-items:stretch!important;padding:12px 10px 10px!important;gap:8px}.sq.u .uw{display:flex;flex-direction:column;gap:8px;min-width:0;width:100%}
 .hd{display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:800;letter-spacing:.02em;white-space:nowrap}.hd span{color:#1d1c1a}
-.sq .hd svg.ic{width:30px!important;height:30px!important;margin:0!important;align-self:center;filter:none;overflow:visible}
+.sq .hd svg.ic{width:30px!important;height:30px!important;margin:0!important;align-self:center;filter:none;overflow:visible}.grid>.sq.u{position:relative;overflow:visible}.sq.u .hd{padding-left:46px;justify-content:center;min-height:38px}.sq.u .hd svg.ic{position:absolute;top:-10px;left:-10px;width:64px!important;height:64px!important;padding:8px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0,#f6f5f1 60%,#e6e3da 100%);border:5px solid #0b0b0b;box-shadow:inset 0 -2px 4px rgba(0,0,0,.12);z-index:3}.sq.u .hd span{font-size:clamp(13px,4.1vw,16px)}
 .sq.u .d{text-align:center}.sq.u .ticker{margin-top:0!important}.sq.botet .hd svg{color:#d4498a!important}.sq.botet .botev{text-align:center;font-size:32px;font-weight:900;margin-top:2px;padding:10px 6px;border-radius:12px;background:linear-gradient(180deg,#5af08c 0%,#22c45a 55%,#16a548 100%);border:1px solid #14963f;box-shadow:0 3px 0 #0d7a32,inset 0 2px 0 rgba(255,255,255,.4);color:#04381a}.sq.botet .botev.neg{background:linear-gradient(180deg,#f47272 0%,#e04848 55%,#c93636 100%);border-color:#b32f2f;box-shadow:0 3px 0 #8f2424;color:#fff}
 .ic *{transform-box:fill-box}
 .ic-cal .chk{stroke-dasharray:12;animation:icChk 2.6s ease-in-out infinite}@keyframes icChk{0%{stroke-dashoffset:12}35%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:-12}}
